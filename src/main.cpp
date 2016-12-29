@@ -8,8 +8,13 @@
 // Standard Headers
 #include <cstdio>
 #include <cstdlib>
+#include <string>
+#include <cstring>
 
 int main(int argc, char * argv[]) {
+
+    int windowWidth = 500; // mWidth for full window
+    int windowHeight = 500; // mHeight for full window
 
     // Load GLFW and Create a Window
     glfwInit();
@@ -18,7 +23,7 @@ int main(int argc, char * argv[]) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-    auto mWindow = glfwCreateWindow(mWidth, mHeight, "OpenGL", nullptr, nullptr);
+    auto mWindow = glfwCreateWindow(windowWidth, windowHeight, "NES Emulator", nullptr, nullptr);
 
     // Check for Valid Context
     if (mWindow == nullptr) {
@@ -29,7 +34,13 @@ int main(int argc, char * argv[]) {
     // Create Context and Load OpenGL Functions
     glfwMakeContextCurrent(mWindow);
     gladLoadGL();
-    fprintf(stderr, "OpenGL %s\n", glGetString(GL_VERSION));
+    // fprintf(stderr, "OpenGL %s\n", glGetString(GL_VERSION));
+    fprintf(stderr, "NES Emulator loaded\n");
+
+    if (argc > 1) {
+      char* secondArg = argv[1];
+      fprintf(stderr, "%s loading...\n", secondArg);
+    }
 
     // Rendering Loop
     while (glfwWindowShouldClose(mWindow) == false) {
