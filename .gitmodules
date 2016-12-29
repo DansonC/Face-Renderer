@@ -1,0 +1,6 @@
+[submodule "Glitter/Vendor/glad"]
+	path = Glitter/Vendor/glad
+	url = https://github.com/Dav1dde/glad.git
+[submodule "Build/lib/glad"]
+	path = Build/lib/glad
+	url = https://github.com/Dav1dde/glad.git
