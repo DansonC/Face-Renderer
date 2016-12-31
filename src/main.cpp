@@ -1,5 +1,6 @@
 // Local Headers
 #include "nes.hpp"
+#include "cpu.hpp"
 
 // System Headers
 #include <glad/glad.h>
@@ -11,8 +12,22 @@
 #include <string>
 #include <cstring>
 
+
+/** Print's usage information **/
+void usage() {
+    printf("nes-emu <rom path>\n");
+}
 int main(int argc, char * argv[]) {
 
+    if (argc == 2) {
+      char* secondArg = argv[1];
+      fprintf(stderr, "%s loading...\n", secondArg);
+    }
+    else {
+        usage();
+        return EXIT_FAILURE;
+    }
+    
     int windowWidth = 500; // mWidth for full window
     int windowHeight = 500; // mHeight for full window
 
@@ -36,11 +51,8 @@ int main(int argc, char * argv[]) {
     gladLoadGL();
     // fprintf(stderr, "OpenGL %s\n", glGetString(GL_VERSION));
     fprintf(stderr, "NES Emulator loaded\n");
-
-    if (argc > 1) {
-      char* secondArg = argv[1];
-      fprintf(stderr, "%s loading...\n", secondArg);
-    }
+    
+    NesCPU* cpu = new NesCPU(argv[1]);
 
     // Rendering Loop
     while (glfwWindowShouldClose(mWindow) == false) {

@@ -31,6 +31,7 @@ class NesCPU
 
 NesCPU::NesCPU(const std::string romDir){
     std::cout << "NES CPU is being created" << std::endl;
+    std::cout << "Loading " << romDir << std::endl;
 }
 
 NesCPU::~NesCPU(void){
