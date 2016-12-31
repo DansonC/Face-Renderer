@@ -5,16 +5,9 @@
 #include <cstdlib>
 #include <string>
 #include <cstring>
-#include <cstdint.h>
+#include <cstdint>
+#include <iostream>
 
-int NesCPU::NesCPU(string romDir)
-{
-	//TODO load rom
-    //TODO load correct mapper
-    //TODO init registers
-    //TODO init memory
-    //TODO run init code
-}
 void NesCPU::run()
 {
     // 1. Grab opcode
