@@ -28,5 +28,9 @@
 *.out
 *.app
 
+# Swap files
+*.swp
+*.swo
+
 Build/*
 build/*
