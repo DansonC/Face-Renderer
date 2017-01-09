@@ -54,7 +54,11 @@ void NesCPU::LDA(){}
 void NesCPU::LDX(){}
 void NesCPU::LDY(){}
 void NesCPU::LSR(){}
-void NesCPU::NOP(){}
+
+void NesCPU::NOP(){
+    pc+= 1;
+}
+
 void NesCPU::ORA(){}
 void NesCPU::PHA(){}
 void NesCPU::PHP(){}
