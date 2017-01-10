@@ -1,7 +1,6 @@
 // Local Headers
-#include "nes.hpp"
-#include "cpu.hpp"
-
+#include "nes.h"
+#include "cpu.h"
 // System Headers
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

@@ -25,6 +25,19 @@ class NesCPU
         uint8_t S, A, X, Y;
         uint8_t P;
         
+        uint8_t get_opcode();
+
+        
+        
+        
+
+    public:
+        void run();
+        NesCPU(const std::string romDir); // constructor
+        ~NesCPU(); // destructor
+        
+        //Temporary Fix
+        //To be refactored later
         void ADC();
         void AND();
         void ASL();
@@ -80,49 +93,7 @@ class NesCPU
         void TXA();
         void TXS();
         void TYA();
-        
-        
-        
-
-    public:
-        void run();
-        NesCPU(const std::string romDir); // constructor
-        ~NesCPU(); // destructor
 };
 
-
-//TEMPORARY PROGRAMS TO TRY RUNNING
-unsigned char noptest[3] = {0xea, 0xea, 0xea}; // NO OPS 
-unsigned char test1[7] = {0xa9, 0xc0, 0xaa, 0xe8, 0x69, 0xc4, 0x00};
-
-
-
-
-
-
-
-NesCPU::NesCPU(const std::string romDir){
-    std::cout << "NES CPU is being created" << std::endl;
-    
-    /** INITIALIZING POWERUP STATE **/
-    P = 0x34;
-    A = 0;
-    X = 0;
-    Y = 0;
-    S = 0xFD;
-    
-    //TODO init memory
-    //Temporary starting point. Change later
-    pc = 0;
-    
-    
-    std::cout << "Loading " << romDir << std::endl;
-    //TODO load rom
-    
-}
-
-NesCPU::~NesCPU(void){
-    std::cout << "NES CPU is being deleted" << std::endl;
-}
 
 #endif
