@@ -8,34 +8,44 @@
 #include <cstdint>
 #include <iostream>
 
-
-
+/** flags P = NVBU DIZC
+    to set negative flag: P = P | N,
+    to unset negative flag: P = P & ~N,
+    etc.
+ **/
+#define N 0x80 // negative
+#define V 0x40 // overflow
+#define B 0x20 // break
+#define U 0x10 // unused
+#define D 0x08 // decimal
+#define I 0x04 // interrupt
+#define Z 0x02 // zero
+#define C 0x01 // carry
 
 //TEMPORARY PROGRAMS TO TRY RUNNING
-unsigned char noptest[3] = {0xea, 0xea, 0xea}; // NO OPS 
+unsigned char noptest[3] = {0xea, 0xea, 0xea}; // NO OPS
 unsigned char test1[7] = {0xa9, 0xc0, 0xaa, 0xe8, 0x69, 0xc4, 0x00};
-
 
 
 
 NesCPU::NesCPU(const std::string romDir){
     std::cout << "NES CPU is being created" << std::endl;
-    
+
     /** INITIALIZING POWERUP STATE **/
     P = 0x34;
     A = 0;
     X = 0;
     Y = 0;
     S = 0xFD;
-    
+
     //TODO init memory
     //Temporary starting point. Change later
     pc = 0;
-    
-    
+
+
     std::cout << "Loading " << romDir << std::endl;
     //TODO load rom
-    
+
 }
 
 NesCPU::~NesCPU(void){
@@ -143,7 +153,6 @@ void NesCPU::run()
             }
             break;
     }
-    
 }
 
 void NesCPU::process_ops(uint8_t opcode)
