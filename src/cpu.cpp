@@ -8,17 +8,28 @@
 #include <cstdint>
 #include <iostream>
 
-
-
+/** flags P = NVBU DIZC
+    to set negative flag: P = P | N,
+    to unset negative flag: P = P & ~N,
+    etc.
+ **/
+#define N 0x80 // negative
+#define V 0x40 // overflow
+#define B 0x20 // break
+#define U 0x10 // unused
+#define D 0x08 // decimal
+#define I 0x04 // interrupt
+#define Z 0x02 // zero
+#define C 0x01 // carry
 
 //TEMPORARY PROGRAMS TO TRY RUNNING
-unsigned char noptest[3] = {0xea, 0xea, 0xea}; // NO OPS 
+unsigned char noptest[3] = {0xea, 0xea, 0xea}; // NO OPS
 unsigned char test1[7] = {0xa9, 0xc0, 0xaa, 0xe8, 0x69, 0xc4, 0x00};
 
 
 
 void (NesCPU::*ops[151])(void) =  {
-/* $00 */ NesCPU::NOP, 
+/* $00 */ NesCPU::NOP,
 /* $01 */ NesCPU::NOP,
 /* $02 */ NesCPU::NOP,
 /* $03 */ NesCPU::NOP,
@@ -174,22 +185,22 @@ void (NesCPU::*ops[151])(void) =  {
 
 NesCPU::NesCPU(const std::string romDir){
     std::cout << "NES CPU is being created" << std::endl;
-    
+
     /** INITIALIZING POWERUP STATE **/
     P = 0x34;
     A = 0;
     X = 0;
     Y = 0;
     S = 0xFD;
-    
+
     //TODO init memory
     //Temporary starting point. Change later
     pc = 0;
-    
-    
+
+
     std::cout << "Loading " << romDir << std::endl;
     //TODO load rom
-    
+
 }
 
 NesCPU::~NesCPU(void){
@@ -206,8 +217,8 @@ void NesCPU::run()
     // 1. Grab opcode
     uint8_t opcode = this->get_opcode();
     // 2. Run function from table
-    
-    
+
+
 }
 
 
@@ -231,12 +242,26 @@ void NesCPU::CMP(){}
 void NesCPU::CPX(){}
 void NesCPU::CPY(){}
 void NesCPU::DEC(){}
-void NesCPU::DEX(){}
-void NesCPU::DEY(){}
+
+void NesCPU::DEX(){
+//TODO $CA
+}
+
+void NesCPU::DEY(){
+//TODO $88
+}
+
 void NesCPU::EOR(){}
 void NesCPU::INC(){}
-void NesCPU::INX(){}
-void NesCPU::INY(){}
+
+void NesCPU::INX(){
+//TODO $E8
+}
+
+void NesCPU::INY(){
+//TODO $C8
+}
+
 void NesCPU::JMP(){}
 void NesCPU::JSR(){}
 void NesCPU::LDA(){}
@@ -264,9 +289,28 @@ void NesCPU::SEI(){}
 void NesCPU::STA(){}
 void NesCPU::STX(){}
 void NesCPU::STY(){}
-void NesCPU::TAX(){}
-void NesCPU::TAY(){}
+
+void NesCPU::TAX(){
+//TODO $AA
+    X = A;
+    if (X == 0){
+
+    }
+}
+
+void NesCPU::TAY(){
+//TODO $A8
+}
+
 void NesCPU::TSX(){}
-void NesCPU::TXA(){}
+
+void NesCPU::TXA(){
+//TODO $8A
+}
+
 void NesCPU::TXS(){}
-void NesCPU::TYA(){}
+
+void NesCPU::TYA(){
+//TODO $98
+}
+
