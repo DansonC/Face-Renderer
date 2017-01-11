@@ -242,26 +242,12 @@ void NesCPU::CMP(){}
 void NesCPU::CPX(){}
 void NesCPU::CPY(){}
 void NesCPU::DEC(){}
-
-void NesCPU::DEX(){
-//TODO $CA
-}
-
-void NesCPU::DEY(){
-//TODO $88
-}
-
+void NesCPU::DEX(){}
+void NesCPU::DEY(){}
 void NesCPU::EOR(){}
 void NesCPU::INC(){}
-
-void NesCPU::INX(){
-//TODO $E8
-}
-
-void NesCPU::INY(){
-//TODO $C8
-}
-
+void NesCPU::INX(){}
+void NesCPU::INY(){}
 void NesCPU::JMP(){}
 void NesCPU::JSR(){}
 void NesCPU::LDA(){}
@@ -289,28 +275,9 @@ void NesCPU::SEI(){}
 void NesCPU::STA(){}
 void NesCPU::STX(){}
 void NesCPU::STY(){}
-
-void NesCPU::TAX(){
-//TODO $AA
-    X = A;
-    if (X == 0){
-
-    }
-}
-
-void NesCPU::TAY(){
-//TODO $A8
-}
-
+void NesCPU::TAX(){}
+void NesCPU::TAY(){}
 void NesCPU::TSX(){}
-
-void NesCPU::TXA(){
-//TODO $8A
-}
-
+void NesCPU::TXA(){}
 void NesCPU::TXS(){}
-
-void NesCPU::TYA(){
-//TODO $98
-}
-
+void NesCPU::TYA(){}
