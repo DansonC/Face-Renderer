@@ -17,160 +17,6 @@ unsigned char test1[7] = {0xa9, 0xc0, 0xaa, 0xe8, 0x69, 0xc4, 0x00};
 
 
 
-void (NesCPU::*ops[151])(void) =  {
-/* $00 */ NesCPU::NOP, 
-/* $01 */ NesCPU::NOP,
-/* $02 */ NesCPU::NOP,
-/* $03 */ NesCPU::NOP,
-/* $04 */ NesCPU::NOP,
-/* $05 */ NesCPU::NOP,
-/* $06 */ NesCPU::NOP,
-/* $07 */ NesCPU::NOP,
-/* $08 */ NesCPU::NOP,
-/* $09 */ NesCPU::NOP,
-/* $0A */ NesCPU::NOP,
-/* $0B */ NesCPU::NOP,
-/* $0C */ NesCPU::NOP,
-/* $0D */ NesCPU::NOP,
-/* $0E */ NesCPU::NOP,
-/* $0F */ NesCPU::NOP,
-/* $10 */ NesCPU::NOP,
-/* $11 */ NesCPU::NOP,
-/* $12 */ NesCPU::NOP,
-/* $13 */ NesCPU::NOP,
-/* $14 */ NesCPU::NOP,
-/* $15 */ NesCPU::NOP,
-/* $16 */ NesCPU::NOP,
-/* $17 */ NesCPU::NOP,
-/* $18 */ NesCPU::NOP,
-/* $19 */ NesCPU::NOP,
-/* $1A */ NesCPU::NOP,
-/* $1B */ NesCPU::NOP,
-/* $1C */ NesCPU::NOP,
-/* $1D */ NesCPU::NOP,
-/* $1E */ NesCPU::NOP,
-/* $1F */ NesCPU::NOP,
-/* $20 */ NesCPU::NOP,
-/* $21 */ NesCPU::NOP,
-/* $22 */ NesCPU::NOP,
-/* $23 */ NesCPU::NOP,
-/* $24 */ NesCPU::NOP,
-/* $25 */ NesCPU::NOP,
-/* $26 */ NesCPU::NOP,
-/* $27 */ NesCPU::NOP,
-/* $28 */ NesCPU::NOP,
-/* $29 */ NesCPU::NOP,
-/* $2A */ NesCPU::NOP,
-/* $2B */ NesCPU::NOP,
-/* $2C */ NesCPU::NOP,
-/* $2D */ NesCPU::NOP,
-/* $2E */ NesCPU::NOP,
-/* $2F */ NesCPU::NOP,
-/* $30 */ NesCPU::NOP,
-/* $31 */ NesCPU::NOP,
-/* $32 */ NesCPU::NOP,
-/* $33 */ NesCPU::NOP,
-/* $34 */ NesCPU::NOP,
-/* $35 */ NesCPU::NOP,
-/* $36 */ NesCPU::NOP,
-/* $37 */ NesCPU::NOP,
-/* $38 */ NesCPU::NOP,
-/* $39 */ NesCPU::NOP,
-/* $3A */ NesCPU::NOP,
-/* $3B */ NesCPU::NOP,
-/* $3C */ NesCPU::NOP,
-/* $3D */ NesCPU::NOP,
-/* $3E */ NesCPU::NOP,
-/* $3F */ NesCPU::NOP,
-/* $40 */ NesCPU::NOP,
-/* $41 */ NesCPU::NOP,
-/* $42 */ NesCPU::NOP,
-/* $43 */ NesCPU::NOP,
-/* $44 */ NesCPU::NOP,
-/* $45 */ NesCPU::NOP,
-/* $46 */ NesCPU::NOP,
-/* $47 */ NesCPU::NOP,
-/* $48 */ NesCPU::NOP,
-/* $49 */ NesCPU::NOP,
-/* $4A */ NesCPU::NOP,
-/* $4B */ NesCPU::NOP,
-/* $4C */ NesCPU::NOP,
-/* $4D */ NesCPU::NOP,
-/* $4E */ NesCPU::NOP,
-/* $4F */ NesCPU::NOP,
-/* $50 */ NesCPU::NOP,
-/* $51 */ NesCPU::NOP,
-/* $52 */ NesCPU::NOP,
-/* $53 */ NesCPU::NOP,
-/* $54 */ NesCPU::NOP,
-/* $55 */ NesCPU::NOP,
-/* $56 */ NesCPU::NOP,
-/* $57 */ NesCPU::NOP,
-/* $58 */ NesCPU::NOP,
-/* $59 */ NesCPU::NOP,
-/* $5A */ NesCPU::NOP,
-/* $5B */ NesCPU::NOP,
-/* $5C */ NesCPU::NOP,
-/* $5D */ NesCPU::NOP,
-/* $5E */ NesCPU::NOP,
-/* $5F */ NesCPU::NOP,
-/* $60 */ NesCPU::NOP,
-/* $61 */ NesCPU::NOP,
-/* $62 */ NesCPU::NOP,
-/* $63 */ NesCPU::NOP,
-/* $64 */ NesCPU::NOP,
-/* $65 */ NesCPU::NOP,
-/* $66 */ NesCPU::NOP,
-/* $67 */ NesCPU::NOP,
-/* $68 */ NesCPU::NOP,
-/* $69 */ NesCPU::NOP,
-/* $6A */ NesCPU::NOP,
-/* $6B */ NesCPU::NOP,
-/* $6C */ NesCPU::NOP,
-/* $6D */ NesCPU::NOP,
-/* $6E */ NesCPU::NOP,
-/* $6F */ NesCPU::NOP,
-/* $70 */ NesCPU::NOP,
-/* $71 */ NesCPU::NOP,
-/* $72 */ NesCPU::NOP,
-/* $73 */ NesCPU::NOP,
-/* $74 */ NesCPU::NOP,
-/* $75 */ NesCPU::NOP,
-/* $76 */ NesCPU::NOP,
-/* $77 */ NesCPU::NOP,
-/* $78 */ NesCPU::NOP,
-/* $79 */ NesCPU::NOP,
-/* $7A */ NesCPU::NOP,
-/* $7B */ NesCPU::NOP,
-/* $7C */ NesCPU::NOP,
-/* $7D */ NesCPU::NOP,
-/* $7E */ NesCPU::NOP,
-/* $7F */ NesCPU::NOP,
-/* $80 */ NesCPU::NOP,
-/* $81 */ NesCPU::NOP,
-/* $82 */ NesCPU::NOP,
-/* $83 */ NesCPU::NOP,
-/* $84 */ NesCPU::NOP,
-/* $85 */ NesCPU::NOP,
-/* $86 */ NesCPU::NOP,
-/* $87 */ NesCPU::NOP,
-/* $88 */ NesCPU::NOP,
-/* $89 */ NesCPU::NOP,
-/* $8A */ NesCPU::NOP,
-/* $8B */ NesCPU::NOP,
-/* $8C */ NesCPU::NOP,
-/* $8D */ NesCPU::NOP,
-/* $8E */ NesCPU::NOP,
-/* $8F */ NesCPU::NOP,
-/* $90 */ NesCPU::NOP,
-/* $91 */ NesCPU::NOP,
-/* $92 */ NesCPU::NOP,
-/* $93 */ NesCPU::NOP,
-/* $94 */ NesCPU::NOP,
-/* $95 */ NesCPU::NOP,
-/* $96 */ NesCPU:: NOP
-};
-
 
 NesCPU::NesCPU(const std::string romDir){
     std::cout << "NES CPU is being created" << std::endl;
@@ -205,68 +51,257 @@ void NesCPU::run()
 {
     // 1. Grab opcode
     uint8_t opcode = this->get_opcode();
-    // 2. Run function from table
     
+    switch(opcode)
+    {
+        case 0x00:
+            BRK();
+            break;
+        case 0x20: //Special case for JSR absolute
+            NOP(); //TODO
+            break;
+        case 0x40:
+            RTI();
+            break;
+        case 0x60:
+            RTS();
+            break;
+        case 0x08:
+            PHP();
+            break;
+        case 0x28:
+            PLP();
+            break;
+        case 0x48:
+            PHA();
+            break;
+        case 0x68:
+            PLA();
+            break;
+        case 0x88:
+            DEY();
+            break;
+        case 0xA8:
+            TAY();
+            break;
+        case 0xC8:
+            INY();
+            break;
+        case 0xE8:
+            INX();
+            break;
+        case 0x18:
+            CLC();
+            break;
+        case 0x38:
+            SEC();
+            break;
+        case 0x58:
+            CLI();
+            break;
+        case 0x78:
+            SEI();
+            break;
+        case 0x98:
+            TYA();
+            break;
+        case 0xB8:
+            CLV();
+            break;
+        case 0xD8:
+            CLD();
+            break;
+        case 0xF8:
+            SED();
+            break;
+        case 0x8A:
+            TXA();
+            break;
+        case 0x9A:
+            TXS();
+            break;
+        case 0xAA:
+            TAX();
+            break;
+        case 0xBA:
+            TSX();
+            break;
+        case 0xCA:
+            DEX();
+            break;
+        case 0xEA:
+            NOP();
+            break;
+        default:
+         // If opcode follows the form xxy10000, then its a branch
+            if((opcode & (~0xE0)) == 0x10)
+            {
+                //TODO branch code
+            } else
+            {
+                process_ops(opcode);
+            }
+            break;
+    }
     
 }
 
+void NesCPU::process_ops(uint8_t opcode)
+{
+    //Opcodes follow the form aaabbbcc
+    uint8_t a = (opcode >> 5) & (~0x7);
+    uint8_t b = (opcode >> 2) & (~0x7);
+    uint8_t c = opcode & (~0x3);
+    
+    
+    uint16_t addr;
+    
+    if(c == 0x0)
+    {
+        //TODO get address
+        switch(a)
+        {
+            case 0x0:
+                // ASSERT(0); // Should never reach
+            case 0x1:
+                BIT(addr);
+                break;
+            case 0x2:
+                JMP(addr); //TODO figure this out
+                break;
+            case 0x3:
+                JMP(addr); //TODO figure this out
+                break;
+            case 0x4:
+                STY(addr);
+                break;
+            case 0x5:
+                LDY(addr);
+                break;
+            case 0x6:
+                CPY(addr);
+            case 0x7:
+                CPX(addr);
+        }
+    }
+    if(c == 0x1 || 0x3)
+    {
+        //TODO get addr
+        switch(a)
+        {
+           case 0x0:
+                ORA(addr);
+                break;
+            case 0x1:
+                AND(addr);
+                break;
+            case 0x2:
+                EOR(addr);
+                break;
+            case 0x3:
+                ADC(addr);
+                break;
+            case 0x4:
+                STA(addr);
+                break;
+            case 0x5:
+                LDA(addr);
+                break;
+            case 0x6:
+                CMP(addr);
+                break;
+            case 0x7:
+                SBC(addr);
+                break; 
+        }
+    }
+    if(c == 0x2 || 0x3)
+    {
+        //TODO get addr
+        switch(a)
+        {
+            case 0x0:
+                ASL(addr);
+                break;
+            case 0x1:
+                ROL(addr);
+                break;
+            case 0x2:
+                LSR(addr);
+                break;
+            case 0x3:
+                ROR(addr);
+                break;
+            case 0x4:
+                STX(addr);
+                break;
+            case 0x5:
+                LDX(addr);
+                break;
+            case 0x6:
+                DEC(addr);
+                break;
+            case 0x7:
+                INC(addr);
+                break;
+        }
+    }
+}
 
-void NesCPU::ADC(){}
-void NesCPU::AND(){}
-void NesCPU::ASL(){}
-void NesCPU::BCC(){}
-void NesCPU::BCS(){}
-void NesCPU::BEQ(){}
-void NesCPU::BIT(){}
-void NesCPU::BMI(){}
-void NesCPU::BNE(){}
-void NesCPU::BPL(){}
-void NesCPU::BRK(){}
-void NesCPU::BVC(){}
-void NesCPU::CLC(){}
-void NesCPU::CLD(){}
-void NesCPU::CLI(){}
-void NesCPU::CLV(){}
-void NesCPU::CMP(){}
-void NesCPU::CPX(){}
-void NesCPU::CPY(){}
-void NesCPU::DEC(){}
-void NesCPU::DEX(){}
-void NesCPU::DEY(){}
-void NesCPU::EOR(){}
-void NesCPU::INC(){}
-void NesCPU::INX(){}
-void NesCPU::INY(){}
-void NesCPU::JMP(){}
-void NesCPU::JSR(){}
-void NesCPU::LDA(){}
-void NesCPU::LDX(){}
-void NesCPU::LDY(){}
-void NesCPU::LSR(){}
-
+void NesCPU::ADC(uint16_t addr){}
+void NesCPU::AND(uint16_t addr){}
+void NesCPU::ASL(uint16_t addr){}
+void NesCPU::BCC(uint16_t addr){}
+void NesCPU::BCS(uint16_t addr){}
+void NesCPU::BEQ(uint16_t addr){}
+void NesCPU::BIT(uint16_t addr){}
+void NesCPU::BMI(uint16_t addr){}
+void NesCPU::BNE(uint16_t addr){}
+void NesCPU::BPL(uint16_t addr){}
+void NesCPU::BRK(void){}
+void NesCPU::BVC(uint16_t addr){}
+void NesCPU::CLC(void){}
+void NesCPU::CLD(void){}
+void NesCPU::CLI(void){}
+void NesCPU::CLV(void){}
+void NesCPU::CMP(uint16_t addr){}
+void NesCPU::CPX(uint16_t addr){}
+void NesCPU::CPY(uint16_t addr){}
+void NesCPU::DEC(uint16_t addr){}
+void NesCPU::DEX(void){}
+void NesCPU::DEY(void){}
+void NesCPU::EOR(uint16_t addr){}
+void NesCPU::INC(uint16_t addr){}
+void NesCPU::INX(void){}
+void NesCPU::INY(void){}
+void NesCPU::JMP(uint16_t addr){}
+void NesCPU::JSR(uint16_t addr){}
+void NesCPU::LDA(uint16_t addr){}
+void NesCPU::LDX(uint16_t addr){}
+void NesCPU::LDY(uint16_t addr){}
+void NesCPU::LSR(uint16_t addr){}
 void NesCPU::NOP(){
-    pc+= 1;
+    pc += 1;
 }
-
-void NesCPU::ORA(){}
-void NesCPU::PHA(){}
-void NesCPU::PHP(){}
-void NesCPU::PLA(){}
-void NesCPU::PLP(){}
-void NesCPU::ROL(){}
-void NesCPU::ROR(){}
-void NesCPU::RTI(){}
-void NesCPU::RTS(){}
-void NesCPU::SBC(){}
-void NesCPU::SEC(){}
-void NesCPU::SED(){}
-void NesCPU::SEI(){}
-void NesCPU::STA(){}
-void NesCPU::STX(){}
-void NesCPU::STY(){}
-void NesCPU::TAX(){}
-void NesCPU::TAY(){}
-void NesCPU::TSX(){}
-void NesCPU::TXA(){}
-void NesCPU::TXS(){}
-void NesCPU::TYA(){}
+void NesCPU::ORA(uint16_t addr){}
+void NesCPU::PHA(void){}
+void NesCPU::PHP(void){}
+void NesCPU::PLA(void){}
+void NesCPU::PLP(void){}
+void NesCPU::ROL(uint16_t addr){}
+void NesCPU::ROR(uint16_t addr){}
+void NesCPU::RTI(void){}
+void NesCPU::RTS(void){}
+void NesCPU::SBC(uint16_t addr){}
+void NesCPU::SEC(void){}
+void NesCPU::SED(void){}
+void NesCPU::SEI(void){}
+void NesCPU::STA(uint16_t addr){}
+void NesCPU::STX(uint16_t addr){}
+void NesCPU::STY(uint16_t addr){}
+void NesCPU::TAX(void){}
+void NesCPU::TAY(void){}
+void NesCPU::TSX(void){}
+void NesCPU::TXA(void){}
+void NesCPU::TXS(void){}
+void NesCPU::TYA(void){}
