@@ -9,18 +9,18 @@
 #include <iostream>
 
 /** flags P = NVBU DIZC
-    to set negative flag: P = P | N,
-    to unset negative flag: P = P & ~N,
+    to set negative flag: P = P | NEGATIVE_FLAG,
+    to unset negative flag: P = P & ~NEGATIVE_FLAG,
     etc.
  **/
-#define N 0x80 // negative
-#define V 0x40 // overflow
-#define B 0x20 // break
-#define U 0x10 // unused
-#define D 0x08 // decimal
-#define I 0x04 // interrupt
-#define Z 0x02 // zero
-#define C 0x01 // carry
+#define NEGATIVE_FLAG 0x80 // negative
+#define OVERFLOW_FLAG 0x40 // overflow
+#define BREAK_FLAG 0x20 // break
+#define UNUSED_FLAG 0x10 // unused
+#define DECIMAL_FLAG 0x08 // decimal
+#define INTERRUPT_FLAG 0x04 // interrupt
+#define ZERO_FLAG 0x02 // zero
+#define CARRY_FLAG 0x01 // carry
 
 //TEMPORARY PROGRAMS TO TRY RUNNING
 unsigned char noptest[3] = {0xea, 0xea, 0xea}; // NO OPS
@@ -61,7 +61,7 @@ void NesCPU::run()
 {
     // 1. Grab opcode
     uint8_t opcode = this->get_opcode();
-    
+
     switch(opcode)
     {
         case 0x00:
@@ -161,10 +161,10 @@ void NesCPU::process_ops(uint8_t opcode)
     uint8_t a = (opcode >> 5) & (~0x7);
     uint8_t b = (opcode >> 2) & (~0x7);
     uint8_t c = opcode & (~0x3);
-    
-    
+
+
     uint16_t addr;
-    
+
     if(c == 0x0)
     {
         //TODO get address
@@ -221,7 +221,7 @@ void NesCPU::process_ops(uint8_t opcode)
                 break;
             case 0x7:
                 SBC(addr);
-                break; 
+                break;
         }
     }
     if(c == 0x2 || 0x3)
@@ -277,12 +277,45 @@ void NesCPU::CMP(uint16_t addr){}
 void NesCPU::CPX(uint16_t addr){}
 void NesCPU::CPY(uint16_t addr){}
 void NesCPU::DEC(uint16_t addr){}
-void NesCPU::DEX(void){}
-void NesCPU::DEY(void){}
+
+void NesCPU::DEX(void){
+    pc+= 1;
+    X-= 1;
+
+    if (X == 0) P = P | ZERO_FLAG;
+
+    if ((X & 0x80) != 0) P = P | NEGATIVE_FLAG;
+}
+
+void NesCPU::DEY(void){
+    pc+= 1;
+    Y-= 1;
+
+    if (Y == 0) P = P | ZERO_FLAG;
+
+    if ((Y & 0x80) != 0) P = P | NEGATIVE_FLAG;
+}
+
 void NesCPU::EOR(uint16_t addr){}
 void NesCPU::INC(uint16_t addr){}
-void NesCPU::INX(void){}
-void NesCPU::INY(void){}
+void NesCPU::INX(void){
+    pc+= 1;
+    X+= 1;
+
+    if (X == 0) P = P | ZERO_FLAG;
+
+    if ((X & 0x80) != 0) P = P | NEGATIVE_FLAG;
+}
+
+void NesCPU::INY(void){
+    pc+= 1;
+    Y+= 1;
+
+    if (Y == 0) P = P | ZERO_FLAG;
+
+    if ((Y & 0x80) != 0) P = P | NEGATIVE_FLAG;
+}
+
 void NesCPU::JMP(uint16_t addr){}
 void NesCPU::JSR(uint16_t addr){}
 void NesCPU::LDA(uint16_t addr){}
@@ -308,9 +341,43 @@ void NesCPU::SEI(void){}
 void NesCPU::STA(uint16_t addr){}
 void NesCPU::STX(uint16_t addr){}
 void NesCPU::STY(uint16_t addr){}
-void NesCPU::TAX(void){}
-void NesCPU::TAY(void){}
+
+void NesCPU::TAX(void){
+    pc+= 1;
+    X = A;
+
+    if (X == 0) P = P | ZERO_FLAG;
+
+    if ((X & 0x80) != 0) P = P | NEGATIVE_FLAG;
+}
+
+void NesCPU::TAY(void){
+    pc+= 1;
+    Y = A;
+
+    if (Y == 0) P = P | ZERO_FLAG;
+
+    if ((Y & 0x80) != 0) P = P | NEGATIVE_FLAG;
+}
+
 void NesCPU::TSX(void){}
-void NesCPU::TXA(void){}
+
+void NesCPU::TXA(void){
+    pc+= 1;
+    A = X;
+
+    if (A == 0) P = P | ZERO_FLAG;
+
+    if ((A & 0x80) != 0) P = P | NEGATIVE_FLAG;
+}
+
 void NesCPU::TXS(void){}
-void NesCPU::TYA(void){}
+void NesCPU::TYA(void){
+    pc+= 1;
+    A = Y;
+
+    if (A == 0) P = P | ZERO_FLAG;
+
+    if ((A & 0x80) != 0) P = P | NEGATIVE_FLAG;
+}
+
