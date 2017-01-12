@@ -142,7 +142,7 @@ void NesCPU::run()
             DEX();
             break;
         case 0xEA:
-            NOP();
+            //NO OPERATION
             break;
         default:
          // If opcode follows the form xxy10000, then its a branch
@@ -155,6 +155,7 @@ void NesCPU::run()
             }
             break;
     }
+    pc++;
 }
 
 void NesCPU::process_ops(uint8_t opcode)
@@ -273,19 +274,15 @@ void NesCPU::BRK(void){}
 void NesCPU::BVC(uint16_t addr){}
 void NesCPU::CLC(void){
     unset_P(CARRY_FLAG);
-    pc++;
 }
 void NesCPU::CLD(void){
     unset_P(DECIMAL_FLAG);
-    pc++;
 }
 void NesCPU::CLI(void){
     unset_P(INTERRUPT_FLAG);
-    pc++;
 }
 void NesCPU::CLV(void){
     unset_P(OVERFLOW_FLAG);
-    pc++;
 }
 void NesCPU::CMP(uint16_t addr){}
 void NesCPU::CPX(uint16_t addr){}
@@ -293,7 +290,6 @@ void NesCPU::CPY(uint16_t addr){}
 void NesCPU::DEC(uint16_t addr){}
 
 void NesCPU::DEX(void){
-    pc+= 1;
     X-= 1;
 
     if (X == 0) P = P | ZERO_FLAG;
@@ -302,7 +298,6 @@ void NesCPU::DEX(void){
 }
 
 void NesCPU::DEY(void){
-    pc+= 1;
     Y-= 1;
 
     if (Y == 0) P = P | ZERO_FLAG;
@@ -313,7 +308,6 @@ void NesCPU::DEY(void){
 void NesCPU::EOR(uint16_t addr){}
 void NesCPU::INC(uint16_t addr){}
 void NesCPU::INX(void){
-    pc+= 1;
     X+= 1;
 
     if (X == 0) P = P | ZERO_FLAG;
@@ -322,7 +316,6 @@ void NesCPU::INX(void){
 }
 
 void NesCPU::INY(void){
-    pc+= 1;
     Y+= 1;
 
     if (Y == 0) P = P | ZERO_FLAG;
@@ -337,7 +330,7 @@ void NesCPU::LDX(uint16_t addr){}
 void NesCPU::LDY(uint16_t addr){}
 void NesCPU::LSR(uint16_t addr){}
 void NesCPU::NOP(){
-    pc += 1;
+    //DOES NOTHING
 }
 void NesCPU::ORA(uint16_t addr){}
 void NesCPU::PHA(void){}
@@ -351,22 +344,24 @@ void NesCPU::RTS(void){}
 void NesCPU::SBC(uint16_t addr){}
 void NesCPU::SEC(void){
     set_P(CARRY_FLAG);
-    pc++;
 }
 void NesCPU::SED(void){
     set_P(DECIMAL_FLAG);
-    pc++;
 }
 void NesCPU::SEI(void){
     set_P(INTERRUPT_FLAG);
-    pc++;
 }
-void NesCPU::STA(uint16_t addr){}
-void NesCPU::STX(uint16_t addr){}
-void NesCPU::STY(uint16_t addr){}
+void NesCPU::STA(uint16_t addr){
+    mem->write(addr, A);
+}
+void NesCPU::STX(uint16_t addr){
+    mem->write(addr, X);
+}
+void NesCPU::STY(uint16_t addr){
+    mem->write(addr, Y);
+}
 
 void NesCPU::TAX(void){
-    pc+= 1;
     X = A;
 
     test_P((X == 0), ZERO_FLAG);
@@ -375,7 +370,6 @@ void NesCPU::TAX(void){
 }
 
 void NesCPU::TAY(void){
-    pc+= 1;
     Y = A;
 
     test_P((Y == 0), ZERO_FLAG);
@@ -390,7 +384,6 @@ void NesCPU::TSX(void){
 }
 
 void NesCPU::TXA(void){
-    pc+= 1;
     A = X;
 
     test_P((A == 0), ZERO_FLAG);
@@ -399,10 +392,8 @@ void NesCPU::TXA(void){
 
 void NesCPU::TXS(void){
     S = X;
-    pc++;
 }
 void NesCPU::TYA(void){
-    pc+= 1;
     A = Y;
 
     test_P((A == 0), ZERO_FLAG);
