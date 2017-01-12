@@ -2,7 +2,6 @@
 
 //Constructor
 //TODO
-/*
 NesMEM::NesMEM()
 {
     
@@ -14,7 +13,6 @@ NesMEM::~NesMEM()
 {
     
 }
-*/
 /** Translates a NES memory address to a computer memory address
 */
 void* NesMEM::get_mem_location(uint16_t addr)

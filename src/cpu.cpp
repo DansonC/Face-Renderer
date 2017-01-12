@@ -54,23 +54,18 @@ NesCPU::~NesCPU(void){
     delete mem;
 }
 
-//TODO
-uint8_t NesCPU::get_opcode()
-{
-    return 0;
-}
 void NesCPU::run()
 {
     // 1. Grab opcode
-    uint8_t opcode = this->get_opcode();
+    uint8_t opcode = mem->read(pc);
 
     switch(opcode)
     {
         case 0x00:
             BRK();
             break;
-        case 0x20: //Special case for JSR absolute
-            NOP(); //TODO
+        case 0x20:
+            JSR();
             break;
         case 0x40:
             RTI();
@@ -183,8 +178,7 @@ void NesCPU::process_ops(uint8_t opcode)
     if(c == 0x0)
     {
         //TODO get address
-        //TODO Note double jumps. One of them is JUMP ABS, and needs to be special cased
-        void (NesCPU::*optable[8])(uint16_t addr) = {NULL, BIT, JMP, JMP, STY, LDY, CPY, CPX};
+        void (NesCPU::*optable[8])(uint16_t addr) = {NULL, BIT, JMP_ABS, JMP_IND, STY, LDY, CPY, CPX};
         (this->*optable[a])(addr);
     }
     if(c == 0x1 || 0x3)
@@ -209,6 +203,7 @@ void NesCPU::push(uint8_t val){
 uint8_t NesCPU::pull(){
     uint8_t val = mem->read(0x10 | S);
     S++;
+    return val;
 }
 
 
@@ -216,7 +211,6 @@ uint8_t NesCPU::pull(){
 void NesCPU::ADC(uint16_t addr){}
 void NesCPU::AND(uint16_t addr){}
 void NesCPU::ASL(uint16_t addr){}
-void NesCPU::ASL(void){}
 //void NesCPU::BCC(uint16_t addr){}
 //void NesCPU::BCS(uint16_t addr){}
 //void NesCPU::BEQ(uint16_t addr){}
@@ -276,14 +270,11 @@ void NesCPU::INY(void){
 
     if ((Y & 0x80) != 0) P = P | NEGATIVE_FLAG;
 }
-
-void NesCPU::JMP(uint16_t addr){}
-void NesCPU::JSR(uint16_t addr){}
+void NesCPU::JSR(void){}
 void NesCPU::LDA(uint16_t addr){}
 void NesCPU::LDX(uint16_t addr){}
 void NesCPU::LDY(uint16_t addr){}
 void NesCPU::LSR(uint16_t addr){}
-void NesCPU::LSR(void){}
 void NesCPU::NOP(){
     //DOES NOTHING
 }
@@ -304,9 +295,7 @@ void NesCPU::PLP(void){
     P = pull();
 }
 void NesCPU::ROL(uint16_t addr){}
-void NesCPU::ROL(void){}
 void NesCPU::ROR(uint16_t addr){}
-void NesCPU::ROR(void){}
 void NesCPU::RTI(void){}
 void NesCPU::RTS(void){}
 void NesCPU::SBC(uint16_t addr){}
@@ -366,4 +355,14 @@ void NesCPU::TYA(void){
     test_P((A == 0), ZERO_FLAG);
     test_P(((A & 0x80) != 0), NEGATIVE_FLAG);
 }
+
+//JUMP
+void NesCPU::JMP_ABS(uint16_t addr){}
+void NesCPU::JMP_IND(uint16_t addr){}
+
+//Accumulator Addressing
+void NesCPU::ASL(void){}
+void NesCPU::ROL(void){}
+void NesCPU::LSR(void){}
+void NesCPU::ROR(void){}
 

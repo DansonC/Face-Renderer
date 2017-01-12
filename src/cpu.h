@@ -78,8 +78,9 @@ class NesCPU
         void INC(uint16_t addr);
         void INX(void);
         void INY(void);
-        void JMP(uint16_t addr);
-        void JSR(uint16_t addr);
+        void JMP_ABS(uint16_t addr);        
+        void JMP_IND(uint16_t addr);
+        void JSR(void);
         void LDA(uint16_t addr);
         void LDX(uint16_t addr);
         void LDY(uint16_t addr);
