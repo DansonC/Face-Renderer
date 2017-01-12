@@ -38,7 +38,8 @@ NesCPU::NesCPU(const std::string romDir){
     Y = 0;
     S = 0xFD;
 
-    //TODO init memory
+    //TODO  Get Mapper and pass to memory
+    mem = new NesMEM();
     //Temporary starting point. Change later
     pc = 0;
 
@@ -50,6 +51,7 @@ NesCPU::NesCPU(const std::string romDir){
 
 NesCPU::~NesCPU(void){
     std::cout << "NES CPU is being deleted" << std::endl;
+    delete mem;
 }
 
 //TODO

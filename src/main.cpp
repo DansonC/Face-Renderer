@@ -173,5 +173,6 @@ int main(int argc, char * argv[]) {
         glfwSwapBuffers(mWindow);
         glfwPollEvents();
     }   glfwTerminate();
+    delete cpu;
     return EXIT_SUCCESS;
 }
