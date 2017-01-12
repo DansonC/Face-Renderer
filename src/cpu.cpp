@@ -126,6 +126,18 @@ void NesCPU::run()
         case 0xF8:
             SED();
             break;
+        case 0x0A:
+            ASL();
+            break;
+        case 0x2A:
+            ROL();
+            break;
+        case 0x4A:
+            LSR();
+            break;
+        case 0x6A:
+            ROR();
+            break;
         case 0x8A:
             TXA();
             break;
@@ -142,7 +154,7 @@ void NesCPU::run()
             DEX();
             break;
         case 0xEA:
-            //NO OPERATION
+            NOP();
             break;
         default:
          // If opcode follows the form xxy10000, then its a branch
@@ -171,107 +183,49 @@ void NesCPU::process_ops(uint8_t opcode)
     if(c == 0x0)
     {
         //TODO get address
-        switch(a)
-        {
-            case 0x0:
-                // ASSERT(0); // Should never reach
-            case 0x1:
-                BIT(addr);
-                break;
-            case 0x2:
-                JMP(addr); //TODO figure this out
-                break;
-            case 0x3:
-                JMP(addr); //TODO figure this out
-                break;
-            case 0x4:
-                STY(addr);
-                break;
-            case 0x5:
-                LDY(addr);
-                break;
-            case 0x6:
-                CPY(addr);
-            case 0x7:
-                CPX(addr);
-        }
+        //TODO Note double jumps. One of them is JUMP ABS, and needs to be special cased
+        void (NesCPU::*optable[8])(uint16_t addr) = {NULL, BIT, JMP, JMP, STY, LDY, CPY, CPX};
+        (this->*optable[a])(addr);
     }
     if(c == 0x1 || 0x3)
     {
         //TODO get addr
-        switch(a)
-        {
-           case 0x0:
-                ORA(addr);
-                break;
-            case 0x1:
-                AND(addr);
-                break;
-            case 0x2:
-                EOR(addr);
-                break;
-            case 0x3:
-                ADC(addr);
-                break;
-            case 0x4:
-                STA(addr);
-                break;
-            case 0x5:
-                LDA(addr);
-                break;
-            case 0x6:
-                CMP(addr);
-                break;
-            case 0x7:
-                SBC(addr);
-                break;
-        }
+        void (NesCPU::*optable[8])(uint16_t addr) = {ORA, AND, EOR, ADC, STA, LDA, CMP, SBC};
+        (this->*optable[a])(addr);
     }
     if(c == 0x2 || 0x3)
     {
         //TODO get addr
-        switch(a)
-        {
-            case 0x0:
-                ASL(addr);
-                break;
-            case 0x1:
-                ROL(addr);
-                break;
-            case 0x2:
-                LSR(addr);
-                break;
-            case 0x3:
-                ROR(addr);
-                break;
-            case 0x4:
-                STX(addr);
-                break;
-            case 0x5:
-                LDX(addr);
-                break;
-            case 0x6:
-                DEC(addr);
-                break;
-            case 0x7:
-                INC(addr);
-                break;
-        }
+        void (NesCPU::*optable[8])(uint16_t addr) = {ASL, ROL, LSR, ROR, STX, LDX, DEC, INC};
+        (this->*optable[a])(addr);
     }
 }
 
+
+void NesCPU::push(uint8_t val){
+    mem->write(0x10 | S, val);
+    S--;
+}
+uint8_t NesCPU::pull(){
+    uint8_t val = mem->read(0x10 | S);
+    S++;
+}
+
+
+/***** OPCODES *****/
 void NesCPU::ADC(uint16_t addr){}
 void NesCPU::AND(uint16_t addr){}
 void NesCPU::ASL(uint16_t addr){}
-void NesCPU::BCC(uint16_t addr){}
-void NesCPU::BCS(uint16_t addr){}
-void NesCPU::BEQ(uint16_t addr){}
+void NesCPU::ASL(void){}
+//void NesCPU::BCC(uint16_t addr){}
+//void NesCPU::BCS(uint16_t addr){}
+//void NesCPU::BEQ(uint16_t addr){}
 void NesCPU::BIT(uint16_t addr){}
-void NesCPU::BMI(uint16_t addr){}
-void NesCPU::BNE(uint16_t addr){}
-void NesCPU::BPL(uint16_t addr){}
+//void NesCPU::BMI(uint16_t addr){}
+//void NesCPU::BNE(uint16_t addr){}
+//void NesCPU::BPL(uint16_t addr){}
 void NesCPU::BRK(void){}
-void NesCPU::BVC(uint16_t addr){}
+//void NesCPU::BVC(uint16_t addr){}
 void NesCPU::CLC(void){
     unset_P(CARRY_FLAG);
 }
@@ -329,16 +283,30 @@ void NesCPU::LDA(uint16_t addr){}
 void NesCPU::LDX(uint16_t addr){}
 void NesCPU::LDY(uint16_t addr){}
 void NesCPU::LSR(uint16_t addr){}
+void NesCPU::LSR(void){}
 void NesCPU::NOP(){
     //DOES NOTHING
 }
 void NesCPU::ORA(uint16_t addr){}
-void NesCPU::PHA(void){}
-void NesCPU::PHP(void){}
-void NesCPU::PLA(void){}
-void NesCPU::PLP(void){}
+void NesCPU::PHA(void){
+    push(A);
+}
+void NesCPU::PHP(void){
+    push(P);
+}
+void NesCPU::PLA(void){
+    A = pull();
+    
+    test_P((A == 0), ZERO_FLAG);
+    test_P(((A & 0x80) != 0), NEGATIVE_FLAG);
+}
+void NesCPU::PLP(void){
+    P = pull();
+}
 void NesCPU::ROL(uint16_t addr){}
+void NesCPU::ROL(void){}
 void NesCPU::ROR(uint16_t addr){}
+void NesCPU::ROR(void){}
 void NesCPU::RTI(void){}
 void NesCPU::RTS(void){}
 void NesCPU::SBC(uint16_t addr){}
@@ -365,7 +333,6 @@ void NesCPU::TAX(void){
     X = A;
 
     test_P((X == 0), ZERO_FLAG);
-
     test_P(((X & 0x80) != 0), NEGATIVE_FLAG);
 }
 

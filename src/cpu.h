@@ -29,6 +29,8 @@ class NesCPU
         
         uint8_t get_opcode();
         void process_ops(uint8_t opcode);
+        void push(uint8_t val);
+        uint8_t pull();
         
         NesMEM* mem;
         
@@ -48,9 +50,11 @@ class NesCPU
                 P = P & (~flag);
         }
         
+        //Note duplicate function declarations for several functions
         void ADC(uint16_t addr);
         void AND(uint16_t addr);
         void ASL(uint16_t addr);
+        void ASL(void);
         void BCC(uint16_t addr);
         void BCS(uint16_t addr);
         void BEQ(uint16_t addr);
@@ -80,6 +84,7 @@ class NesCPU
         void LDX(uint16_t addr);
         void LDY(uint16_t addr);
         void LSR(uint16_t addr);
+        void LSR(void);
         void NOP();
         void ORA(uint16_t addr);
         void PHA(void);
@@ -87,7 +92,9 @@ class NesCPU
         void PLA(void);
         void PLP(void);
         void ROL(uint16_t addr);
+        void ROL(void);
         void ROR(uint16_t addr);
+        void ROR(void);
         void RTI(void);
         void RTS(void);
         void SBC(uint16_t addr);
