@@ -13,14 +13,14 @@
     to unset negative flag: P = P & ~NEGATIVE_FLAG,
     etc.
  **/
-#define NEGATIVE_FLAG 0x80 // negative
-#define OVERFLOW_FLAG 0x40 // overflow
-#define BREAK_FLAG 0x20 // break
-#define UNUSED_FLAG 0x10 // unused
-#define DECIMAL_FLAG 0x08 // decimal
-#define INTERRUPT_FLAG 0x04 // interrupt
-#define ZERO_FLAG 0x02 // zero
-#define CARRY_FLAG 0x01 // carry
+#define NEGATIVE_FLAG 0x80
+#define OVERFLOW_FLAG 0x40
+#define BREAK_FLAG 0x20
+#define UNUSED_FLAG 0x10
+#define DECIMAL_FLAG 0x08
+#define INTERRUPT_FLAG 0x04
+#define ZERO_FLAG 0x02
+#define CARRY_FLAG 0x01
 
 //TEMPORARY PROGRAMS TO TRY RUNNING
 unsigned char noptest[3] = {0xea, 0xea, 0xea}; // NO OPS
@@ -346,18 +346,17 @@ void NesCPU::TAX(void){
     pc+= 1;
     X = A;
 
-    if (X == 0) P = P | ZERO_FLAG;
+    test_P((X == 0), ZERO_FLAG);
 
-    if ((X & 0x80) != 0) P = P | NEGATIVE_FLAG;
+    test_P(((X & 0x80) != 0), NEGATIVE_FLAG);
 }
 
 void NesCPU::TAY(void){
     pc+= 1;
     Y = A;
 
-    if (Y == 0) P = P | ZERO_FLAG;
-
-    if ((Y & 0x80) != 0) P = P | NEGATIVE_FLAG;
+    test_P((Y == 0), ZERO_FLAG);
+    test_P(((Y & 0x80) != 0), NEGATIVE_FLAG);
 }
 
 void NesCPU::TSX(void){}
@@ -366,9 +365,8 @@ void NesCPU::TXA(void){
     pc+= 1;
     A = X;
 
-    if (A == 0) P = P | ZERO_FLAG;
-
-    if ((A & 0x80) != 0) P = P | NEGATIVE_FLAG;
+    test_P((A == 0), ZERO_FLAG);
+    test_P(((A & 0x80) != 0), NEGATIVE_FLAG);
 }
 
 void NesCPU::TXS(void){}
@@ -376,8 +374,7 @@ void NesCPU::TYA(void){
     pc+= 1;
     A = Y;
 
-    if (A == 0) P = P | ZERO_FLAG;
-
-    if ((A & 0x80) != 0) P = P | NEGATIVE_FLAG;
+    test_P((A == 0), ZERO_FLAG);
+    test_P(((A & 0x80) != 0), NEGATIVE_FLAG);
 }
 

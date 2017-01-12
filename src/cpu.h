@@ -28,6 +28,22 @@ class NesCPU
         uint8_t get_opcode();
         void process_ops(uint8_t opcode);
         
+        void set_P(uint8_t flag){
+            P = P | flag;
+        }
+        
+        void unset_P(uint8_t flag){
+            P = P & (~flag);
+        }
+        
+        void test_P(bool test, uint8_t flag)
+        {
+            if(test)
+                P = P | flag;
+            else
+                P = P & (~flag);
+        }
+        
         void ADC(uint16_t addr);
         void AND(uint16_t addr);
         void ASL(uint16_t addr);
