@@ -270,19 +270,19 @@ void NesCPU::BPL(uint16_t addr){}
 void NesCPU::BRK(void){}
 void NesCPU::BVC(uint16_t addr){}
 void NesCPU::CLC(void){
-    unset(CARRY_FLAG);
+    unset_P(CARRY_FLAG);
     pc++;
 }
 void NesCPU::CLD(void){
-    unset(DECIMAL_FLAG);
+    unset_P(DECIMAL_FLAG);
     pc++;
 }
 void NesCPU::CLI(void){
-    unset(INTERRUPT_FLAG);
+    unset_P(INTERRUPT_FLAG);
     pc++;
 }
 void NesCPU::CLV(void){
-    unset(OVERFLOW_FLAG);
+    unset_P(OVERFLOW_FLAG);
     pc++;
 }
 void NesCPU::CMP(uint16_t addr){}
@@ -348,15 +348,15 @@ void NesCPU::RTI(void){}
 void NesCPU::RTS(void){}
 void NesCPU::SBC(uint16_t addr){}
 void NesCPU::SEC(void){
-    set(CARRY_FLAG);
+    set_P(CARRY_FLAG);
     pc++;
 }
 void NesCPU::SED(void){
-    set(DECIMAL_FLAG);
+    set_P(DECIMAL_FLAG);
     pc++;
 }
 void NesCPU::SEI(void){
-    set(INTERRUPT_FLAG);
+    set_P(INTERRUPT_FLAG);
     pc++;
 }
 void NesCPU::STA(uint16_t addr){}
@@ -384,7 +384,7 @@ void NesCPU::TSX(void){
     X = S;
     
     test_P((X == 0), ZERO_FLAG);
-    test_P(((X & 0x80) != 0)), NEGATIVE_FLAG);
+    test_P(((X & 0x80) != 0), NEGATIVE_FLAG);
 }
 
 void NesCPU::TXA(void){

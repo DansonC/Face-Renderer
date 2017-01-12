@@ -17,6 +17,8 @@
 #include <cstdint>
 #include <iostream>
 
+#include "mem.h"
+
 class NesCPU
 {
     private:
@@ -27,6 +29,8 @@ class NesCPU
         
         uint8_t get_opcode();
         void process_ops(uint8_t opcode);
+        
+        NesMEM* mem;
         
         void set_P(uint8_t flag){
             P = P | flag;
