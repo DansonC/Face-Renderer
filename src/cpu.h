@@ -50,6 +50,14 @@ class NesCPU
                 P = P & (~flag);
         }
         
+        /** Addressing Modes **/
+        uint16_t immediate_addr();
+        uint16_t zero_addr();
+        uint16_t zero_x_addr();
+        uint16_t zero_y_addr();
+        uint16_t abs_addr();
+        
+        
         //Note duplicate function declarations for several functions
         void ADC(uint16_t addr);
         void AND(uint16_t addr);

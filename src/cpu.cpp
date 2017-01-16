@@ -195,13 +195,13 @@ void NesCPU::process_ops(uint8_t opcode)
     }
 }
 
-
+#define STACK_PAGE 0x10
 void NesCPU::push(uint8_t val){
-    mem->write(0x10 | S, val);
+    mem->write(STACK_PAGE | S, val);
     S--;
 }
 uint8_t NesCPU::pull(){
-    uint8_t val = mem->read(0x10 | S);
+    uint8_t val = mem->read(STACK_PAGE | S);
     S++;
     return val;
 }
@@ -209,12 +209,30 @@ uint8_t NesCPU::pull(){
 
 /***** OPCODES *****/
 void NesCPU::ADC(uint16_t addr){}
-void NesCPU::AND(uint16_t addr){}
-void NesCPU::ASL(uint16_t addr){}
+void NesCPU::AND(uint16_t addr){
+    uint8_t val = mem->read(addr);
+    A = A & val;
+    test_P((A == 0), ZERO_FLAG);
+    test_P(((A & 0x80) != 0), NEGATIVE_FLAG);
+}
+void NesCPU::ASL(uint16_t addr){
+    uint8_t val = mem->read(addr);
+    uint8_t result = val << 1;
+    mem->write(addr, result);
+    test_P(((val & 0x80)), CARRY_FLAG);
+    test_P((result == 0), ZERO_FLAG);
+    test_P(((result & 0x80) != 0), NEGATIVE_FLAG);
+}
 //void NesCPU::BCC(uint16_t addr){}
 //void NesCPU::BCS(uint16_t addr){}
 //void NesCPU::BEQ(uint16_t addr){}
-void NesCPU::BIT(uint16_t addr){}
+void NesCPU::BIT(uint16_t addr){
+    uint8_t val = mem->read(addr);
+    val = A & val;
+    test_P((val == 0), ZERO_FLAG);
+    test_P(((val & 0x80) != 0), NEGATIVE_FLAG);
+    test_P(((val & 0x40) != 0), OVERFLOW_FLAG);
+}
 //void NesCPU::BMI(uint16_t addr){}
 //void NesCPU::BNE(uint16_t addr){}
 //void NesCPU::BPL(uint16_t addr){}
@@ -232,53 +250,109 @@ void NesCPU::CLI(void){
 void NesCPU::CLV(void){
     unset_P(OVERFLOW_FLAG);
 }
-void NesCPU::CMP(uint16_t addr){}
-void NesCPU::CPX(uint16_t addr){}
-void NesCPU::CPY(uint16_t addr){}
-void NesCPU::DEC(uint16_t addr){}
+void NesCPU::CMP(uint16_t addr){
+    uint8_t val = mem->read(addr);
+    uint8_t result = A - val;
+    test_P((A >= val), CARRY_FLAG);
+    test_P((A == val), ZERO_FLAG);
+    test_P(((result & 0x80) != 0), NEGATIVE_FLAG);
+}
+
+void NesCPU::CPX(uint16_t addr){
+    uint8_t val = mem->read(addr);
+    uint8_t result = X - val;
+    test_P((X >= val), CARRY_FLAG);
+    test_P((X == val), ZERO_FLAG);
+    test_P(((result & 0x80) != 0), NEGATIVE_FLAG);
+}
+void NesCPU::CPY(uint16_t addr){
+    uint8_t val = mem->read(addr);
+    uint8_t result = Y - val;
+    test_P((Y >= val), CARRY_FLAG);
+    test_P((Y == val), ZERO_FLAG);
+    test_P(((result & 0x80) != 0), NEGATIVE_FLAG);
+}
+void NesCPU::DEC(uint16_t addr){
+    uint8_t val = mem->read(addr);
+    val = val - 1;
+    
+    test_P((val == 0), ZERO_FLAG);
+    test_P(((val & 0x80) != 0), NEGATIVE_FLAG);
+    mem->write(addr, val);
+}
 
 void NesCPU::DEX(void){
     X-= 1;
 
-    if (X == 0) P = P | ZERO_FLAG;
-
-    if ((X & 0x80) != 0) P = P | NEGATIVE_FLAG;
+    test_P((X == 0), ZERO_FLAG);
+    test_P(((X & 0x80) != 0), NEGATIVE_FLAG);
 }
 
 void NesCPU::DEY(void){
     Y-= 1;
 
-    if (Y == 0) P = P | ZERO_FLAG;
-
-    if ((Y & 0x80) != 0) P = P | NEGATIVE_FLAG;
+    test_P((Y == 0), ZERO_FLAG);
+    test_P(((Y & 0x80) != 0), NEGATIVE_FLAG);
 }
 
-void NesCPU::EOR(uint16_t addr){}
-void NesCPU::INC(uint16_t addr){}
+void NesCPU::EOR(uint16_t addr){
+    uint8_t val = mem->read(addr);
+    A = A^val;
+    test_P((A == 0), ZERO_FLAG);
+    test_P(((A & 0x80) != 0), NEGATIVE_FLAG);
+}
+void NesCPU::INC(uint16_t addr){
+    uint8_t val = mem->read(addr);
+    val = val + 1;
+    test_P((val == 0), ZERO_FLAG);
+    test_P(((val & 0x80) != 0), NEGATIVE_FLAG);
+    mem->write(addr, val);
+}
 void NesCPU::INX(void){
     X+= 1;
 
-    if (X == 0) P = P | ZERO_FLAG;
-
-    if ((X & 0x80) != 0) P = P | NEGATIVE_FLAG;
+    test_P((X == 0), ZERO_FLAG);
+    test_P(((X & 0x80) != 0), NEGATIVE_FLAG);
 }
 
 void NesCPU::INY(void){
     Y+= 1;
 
-    if (Y == 0) P = P | ZERO_FLAG;
-
-    if ((Y & 0x80) != 0) P = P | NEGATIVE_FLAG;
+    test_P((Y == 0), ZERO_FLAG);
+    test_P(((Y & 0x80) != 0), NEGATIVE_FLAG);
 }
-void NesCPU::JSR(void){}
-void NesCPU::LDA(uint16_t addr){}
-void NesCPU::LDX(uint16_t addr){}
-void NesCPU::LDY(uint16_t addr){}
+void NesCPU::JSR(void){
+    //TODO
+    /*
+    push(pc + 2); // push (ret address - 1) onto stack
+    pc = abs_addr() - 1;
+    */
+}
+void NesCPU::LDA(uint16_t addr){
+    A = mem->read(addr);
+    test_P((A == 0), ZERO_FLAG);
+    test_P(((A & 0x80) != 0), NEGATIVE_FLAG);
+}
+void NesCPU::LDX(uint16_t addr){
+    X = mem->read(addr);
+    test_P((X == 0), ZERO_FLAG);
+    test_P(((X & 0x80) != 0), NEGATIVE_FLAG);
+}
+void NesCPU::LDY(uint16_t addr){
+    Y = mem->read(addr);
+    test_P((Y == 0), ZERO_FLAG);
+    test_P(((Y & 0x80) != 0), NEGATIVE_FLAG);
+}
 void NesCPU::LSR(uint16_t addr){}
 void NesCPU::NOP(){
     //DOES NOTHING
 }
-void NesCPU::ORA(uint16_t addr){}
+void NesCPU::ORA(uint16_t addr){
+    uint8_t val = mem->read(addr);
+    A = A | val;
+    test_P((A == 0), ZERO_FLAG);
+    test_P(((A & 0x80) != 0), NEGATIVE_FLAG);
+}
 void NesCPU::PHA(void){
     push(A);
 }
@@ -357,11 +431,21 @@ void NesCPU::TYA(void){
 }
 
 //JUMP
-void NesCPU::JMP_ABS(uint16_t addr){}
-void NesCPU::JMP_IND(uint16_t addr){}
+void NesCPU::JMP_ABS(uint16_t addr){
+    pc = addr - 1; // Gets incremented later
+}
+void NesCPU::JMP_IND(uint16_t addr){
+    //TODO
+    //Special case
+}
 
 //Accumulator Addressing
-void NesCPU::ASL(void){}
+void NesCPU::ASL(void){
+    test_P(((A & 0x80)), CARRY_FLAG);
+    A = A << 1;
+    test_P((A == 0), ZERO_FLAG);
+    test_P(((A & 0x80) != 0), NEGATIVE_FLAG);
+}
 void NesCPU::ROL(void){}
 void NesCPU::LSR(void){}
 void NesCPU::ROR(void){}
