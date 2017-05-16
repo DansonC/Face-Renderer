@@ -1,9 +1,8 @@
-// Local Headers
-#include "nes.h"
-#include "cpu.h"
 // System Headers
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // Standard Headers
 #include <cstdio>
@@ -33,62 +32,32 @@ const GLchar* fragmentSource =
     "}";
 
 GLfloat vertices[SCREEN_WIDTH + 1][SCREEN_HEIGHT + 1][2];
-void fill_vertices() {
-    for(int i = 0; i < SCREEN_WIDTH + 1; i++)
-    {
-        for(int j = 0; j < SCREEN_HEIGHT + 1; j++)
-        {
-            vertices[i][j][0] = i;
-            vertices[i][j][1] = j;
-            vertices[i][j][0] = vertices[i][j][0] * 2 / SCREEN_WIDTH - 1;
-            vertices[i][j][1] = vertices[i][j][1] * 2 / SCREEN_HEIGHT - 1;
-        }
-    }
-}
 
 GLuint elements[SCREEN_WIDTH][SCREEN_HEIGHT][6];
 
 GLfloat colors[SCREEN_WIDTH + 1][SCREEN_HEIGHT + 1][2];
 
-void fill_elements() {
-    for(int i = 0; i < SCREEN_WIDTH; i++) {
-        for(int j = 0; j < SCREEN_HEIGHT; j++)
-        {
-            elements[i][j][0] = i * SCREEN_HEIGHT + j;
-            elements[i][j][1] = i * SCREEN_HEIGHT + j + 1;
-            elements[i][j][2] = (i + 1) * SCREEN_HEIGHT + j;
-            elements[i][j][3] = (i + 1) * SCREEN_HEIGHT + j;
-            elements[i][j][4] = (i + 1) * SCREEN_HEIGHT + j + 1;
-            elements[i][j][5] = i * SCREEN_HEIGHT + j;
-        }
-    }
-}
 /** Print's usage information **/
 void usage() {
     printf("nes-emu <rom path>\n");
 }
 int main(int argc, char * argv[]) {
 
-    if (argc == 2) {
-      char* secondArg = argv[1];
-      fprintf(stderr, "%s loading...\n", secondArg);
-    }
-    else {
-        usage();
-        return EXIT_FAILURE;
-    }
-    
     int windowWidth = 500; // mWidth for full window
     int windowHeight = 500; // mHeight for full window
 
     // Load GLFW and Create a Window
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-    auto mWindow = glfwCreateWindow(windowWidth, windowHeight, "NES Emulator", nullptr, nullptr);
+    if(glfwInit() == false)
+    {
+        fprintf(stderr, "Failed to initialize OPENGL\n");
+        return EXIT_FAILURE;
+    }
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    //glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    auto mWindow = glfwCreateWindow(windowWidth, windowHeight, "Face Triangulation", nullptr, nullptr);
 
     // Check for Valid Context
     if (mWindow == nullptr) {
@@ -103,9 +72,7 @@ int main(int argc, char * argv[]) {
     }
     
         
-    fill_vertices();
-    fill_elements();
-    
+/*
     // Create Vertex Array Object
     GLuint vao;
     glGenVertexArrays(1, &vao);
@@ -154,9 +121,7 @@ int main(int argc, char * argv[]) {
     
     // fprintf(stderr, "OpenGL %s\n", glGetString(GL_VERSION));
     fprintf(stderr, "NES Emulator loaded\n");
-    
-    NesCPU* cpu = new NesCPU(argv[1]);
-
+    */
     // Rendering Loop
     while (glfwWindowShouldClose(mWindow) == false) {
         if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -167,12 +132,11 @@ int main(int argc, char * argv[]) {
         glClear(GL_COLOR_BUFFER_BIT);
         
         /** DRAW HERE **/
-        glDrawElements(GL_TRIANGLES, 96, GL_UNSIGNED_INT, 0);
+        //glDrawElements(GL_TRIANGLES, 96, GL_UNSIGNED_INT, 0);
 
         // Flip Buffers and Draw
         glfwSwapBuffers(mWindow);
         glfwPollEvents();
     }   glfwTerminate();
-    delete cpu;
     return EXIT_SUCCESS;
 }
