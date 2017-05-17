@@ -101,7 +101,7 @@ int main(int argc, char * argv[]) {
 
     GLuint ebo;
     glGenBuffers(1, &ebo);
-
+    /*
     GLfloat vertices[] = {
          0.0f,  0.5f, 0.0f,
          0.5f, -0.5f, 0.0f,
@@ -117,6 +117,19 @@ int main(int argc, char * argv[]) {
     GLuint elements[] = {
 	    0, 1, 2
     };
+    */
+    const int vertices_size = (53215 + 1) * 3;
+    const int elements_size = 105840 * 3;
+    const int colors_size = vertices_size;
+    GLfloat vertices[vertices_size];
+    GLfloat colors[colors_size];
+    GLuint elements[elements_size];
+    input("../input/shape.txt", (vertices + 3));
+    input("../input/texture.txt", (colors + 3));
+    input("../input/triangulation.txt", elements);
+    for (int n = 0; n < colors_size; n++) {
+        colors[n] = colors[n] / 255.;
+    }
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
@@ -153,7 +166,7 @@ int main(int argc, char * argv[]) {
     GLint colorAttrib =  glGetAttribLocation(shaderProgram, "color");
     glEnableVertexAttribArray(colorAttrib);
     glVertexAttribPointer(colorAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    input("../input/test.txt");
+
     // Rendering Loop
     while (glfwWindowShouldClose(mWindow) == false) {
         if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -164,7 +177,7 @@ int main(int argc, char * argv[]) {
         glClear(GL_COLOR_BUFFER_BIT);
         
         /** DRAW HERE **/
-        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, elements_size, GL_UNSIGNED_INT, 0);
 
         // Flip Buffers and Draw
         glfwSwapBuffers(mWindow);
