@@ -99,6 +99,9 @@ int main(int argc, char * argv[]) {
     GLuint color_buffer;
     glGenBuffers(1, &color_buffer);
 
+    GLuint ebo;
+    glGenBuffers(1, &ebo);
+
     GLfloat vertices[] = {
          0.0f,  0.5f, 0.0f,
          0.5f, -0.5f, 0.0f,
@@ -110,6 +113,13 @@ int main(int argc, char * argv[]) {
          1.0f,  0.0f, 0.0f,
          0.0f,  0.0f, 1.0f,
     };
+
+    GLuint elements[] = {
+	    0, 1, 2
+    };
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -154,7 +164,7 @@ int main(int argc, char * argv[]) {
         glClear(GL_COLOR_BUFFER_BIT);
         
         /** DRAW HERE **/
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
         // Flip Buffers and Draw
         glfwSwapBuffers(mWindow);
