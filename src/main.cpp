@@ -50,8 +50,8 @@ const GLchar* fragmentSource =
     "}\n";
 int main(int argc, char * argv[]) {
 
-    int windowWidth = 500; // mWidth for full window
-    int windowHeight = 500; // mHeight for full window
+    int windowWidth = 800; // mWidth for full window
+    int windowHeight = 600; // mHeight for full window
 
     // Load GLFW and Create a Window
     if(glfwInit() == false)
