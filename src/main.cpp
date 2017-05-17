@@ -10,6 +10,9 @@
 #include <string>
 #include <cstring>
 
+// Support Headers
+#include "../include/io.hpp"
+
 #define SCREEN_WIDTH 4
 #define SCREEN_HEIGHT 4
 #define PIXEL_SIZE 2
@@ -118,7 +121,7 @@ int main(int argc, char * argv[]) {
     GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
     glEnableVertexAttribArray(posAttrib);
     glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
+    input("../input/test.txt");
     // Rendering Loop
     while (glfwWindowShouldClose(mWindow) == false) {
         if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
