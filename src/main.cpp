@@ -143,7 +143,7 @@ int main(int argc, char * argv[]) {
     GLint colorAttrib =  glGetAttribLocation(shaderProgram, "color");
     glEnableVertexAttribArray(colorAttrib);
     glVertexAttribPointer(colorAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
+    input("../input/test.txt");
     // Rendering Loop
     while (glfwWindowShouldClose(mWindow) == false) {
         if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
