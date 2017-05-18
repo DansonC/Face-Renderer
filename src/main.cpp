@@ -46,31 +46,16 @@ const GLchar* fragmentSource = R"glsl(
         outColor = vec4(Color, 1.0);
     }
 )glsl";
-/*
-const GLchar* vertexSource =
-    "#version 150 core\n"
-    "in vec2 position;\n"
-    "void main()\n"
-    "{\n"
-    "    gl_Position = vec4(position, 0.0, 1.0);\n"
-    "}\n";
-const GLchar* fragmentSource =
-    "#version 150 core\n"
-    "out vec4 outColor;\n"
-    "void main()\n"
-    "{\n"
-    "    outColor = vec4(0.5, 1.0, 1.0, 1.0);\n"
-    "}\n";
-    */
+
 int main(int argc, char * argv[]) {
 
     float x, y, z;
-    y = 90.0;
-    x = 45.0;
+    y = 30;
+    x = 0;
     z = 0;
 
-    int windowWidth = 800; // mWidth for full window
-    int windowHeight = 600; // mHeight for full window
+    int windowWidth = 800;
+    int windowHeight = 600;
 
     // Load GLFW and Create a Window
     if(glfwInit() == false)
@@ -161,7 +146,7 @@ int main(int argc, char * argv[]) {
 
 
     glm::mat4 view = glm::lookAt(
-		     glm::vec3(0.0f, 0.0f, 3.0f),
+		     glm::vec3(0.0f, 0.0f, -3.0f),
 		     glm::vec3(0.0f, 0.0f, 0.0f),
 		     glm::vec3(0.0f, 1.0f, 0.0f)
 		    );
