@@ -21,7 +21,6 @@ include_directories(include
                     lib/glfw/include/
                     lib/glm/
                     lib/stb/)
-
 file(GLOB VENDORS_SOURCES lib/glad/src/glad.c)
 file(GLOB PROJECT_HEADERS include/*.hpp)
 file(GLOB PROJECT_SOURCES src/*.cpp)
