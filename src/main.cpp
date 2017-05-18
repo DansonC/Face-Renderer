@@ -24,7 +24,7 @@
 // Rotations About Axis                                 --- Add Functionality for Roll, Pitch, Yaw
 float camera_x = 0.; // degrees of rotation about x-axis
 float camera_y = 0.; // degrees of rotation about y-axis
-float camera_z = -3.; // degrees of rotation about y-axis
+float camera_z = -100.; // degrees of rotation about y-axis
 float focus_x = 0.; // degrees of rotation about x-axis
 float focus_y = 0.; // degrees of rotation about y-axis
 float focus_z = 0.; // degrees of rotation about y-axis
@@ -33,8 +33,10 @@ float y = 0.; // degrees of rotation about y-axis
 float z = 0.; // degrees of rotation about y-axis
 const float ANIME_ROT_SPEED = 20.; // animated rotation speed
 const float ROT_SPEED = 2.;        // keyboard input rotation speed
-const float INCREMENT = 0.1;
-float zoom = 45.;                  // zoom
+const float ZOOM_SPEED = 0.1;      // zoom sensitivity
+const float DEPTH_SPEED = 10;      // depth field sensitivity
+const float FOCUS_SPEED = 0.1;     // focus translation sensitivity
+float zoom = 1;                    // zoom
 float aspect = 800. / 600.;        // aspect ratio
 
 // Data Size                                            --- Fix Error Checking for Incorrect Data Size
@@ -189,36 +191,36 @@ int main(int argc, char * argv[]) {
             z += ROT_SPEED;
 
         if (glfwGetKey(mWindow, GLFW_KEY_KP_6) == GLFW_PRESS)
-            camera_x += INCREMENT;
+            camera_x += DEPTH_SPEED;
         if (glfwGetKey(mWindow, GLFW_KEY_KP_4) == GLFW_PRESS)
-            camera_x -= INCREMENT;
+            camera_x -= DEPTH_SPEED;
         if (glfwGetKey(mWindow, GLFW_KEY_KP_2) == GLFW_PRESS)
-            camera_y -= INCREMENT;
+            camera_y -= DEPTH_SPEED;
         if (glfwGetKey(mWindow, GLFW_KEY_KP_8) == GLFW_PRESS)
-            camera_y += INCREMENT;
+            camera_y += DEPTH_SPEED;
         if (glfwGetKey(mWindow, GLFW_KEY_KP_1) == GLFW_PRESS)
-            camera_z -= INCREMENT;
+            camera_z -= DEPTH_SPEED;
         if (glfwGetKey(mWindow, GLFW_KEY_KP_3) == GLFW_PRESS)
-            camera_z += INCREMENT;
+            camera_z += DEPTH_SPEED;
 
         if (glfwGetKey(mWindow, GLFW_KEY_D) == GLFW_PRESS)
-            focus_x += INCREMENT;
+            focus_x += FOCUS_SPEED;
         if (glfwGetKey(mWindow, GLFW_KEY_A) == GLFW_PRESS)
-            focus_x -= INCREMENT;
+            focus_x -= FOCUS_SPEED;
         if (glfwGetKey(mWindow, GLFW_KEY_X) == GLFW_PRESS)
-            focus_y -= INCREMENT;
+            focus_y -= FOCUS_SPEED;
         if (glfwGetKey(mWindow, GLFW_KEY_W) == GLFW_PRESS)
-            focus_y += INCREMENT;
+            focus_y += FOCUS_SPEED;
         if (glfwGetKey(mWindow, GLFW_KEY_Z) == GLFW_PRESS)
-            focus_z -= INCREMENT;
+            focus_z -= FOCUS_SPEED;
         if (glfwGetKey(mWindow, GLFW_KEY_C) == GLFW_PRESS)
-            focus_z += INCREMENT;
+            focus_z += FOCUS_SPEED;
 
 
         if (glfwGetKey(mWindow, GLFW_KEY_MINUS) == GLFW_PRESS)
-            zoom = fmod(zoom + ROT_SPEED, 180);
+            zoom = fmod(zoom + ZOOM_SPEED, 180);
         if (glfwGetKey(mWindow, GLFW_KEY_EQUAL) == GLFW_PRESS)
-            zoom = fmod(zoom - ROT_SPEED, 180);
+            zoom = fmod(zoom - ZOOM_SPEED, 180);
 
         if (glfwGetKey(mWindow, GLFW_KEY_COMMA) == GLFW_PRESS)
             aspect += 0.1;
@@ -256,7 +258,7 @@ int main(int argc, char * argv[]) {
         glm::radians(zoom),   // vertical field of view 
         aspect,               // screen aspect ratio
         0.1f,                 // near clipping plane
-        100.0f                // far clipping plane
+        200.0f                // far clipping plane
         );
         GLint uniProj = glGetUniformLocation(shaderProgram, "proj");
         glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
