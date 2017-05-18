@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 2.8)
 project(face_render)
 
 option(GLFW_BUILD_DOCS OFF)
