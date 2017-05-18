@@ -1,19 +1,15 @@
-// main.cpp
-
 // System Headers
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <chrono>
 
 // Standard Headers
 #include <cstdio>
 #include <cstdlib>
 #include <string>
 #include <cstring>
-#include <math.h>
 
 // Support Headers
 #include "../include/io.hpp"
@@ -23,10 +19,6 @@
 #define PIXEL_SIZE 2
 #define SCREEN_OFFSET 0
 
-const int VERTICES_SIZE = (53215 + 1) * 3;
-const int COLORS_SIZE = VERTICES_SIZE;
-const int ELEMENTS_SIZE = 105840 * 3;
-
 // Shader sources
 const GLchar* vertexSource = R"glsl(
     #version 150 core
@@ -35,17 +27,15 @@ const GLchar* vertexSource = R"glsl(
 
     out vec3 Color;
 
-    uniform mat4 model;
+    uniform mat4 trans;
     uniform mat4 view;
     uniform mat4 proj;
-
     void main()
     {
 	Color = color;
-        gl_Position = view * vec4(position, 1.0);
+        gl_Position = proj * view * trans * vec4(position, 1.0);
     }
 )glsl";
-//gl_Position = proj * view * trans * vec4(position, 1.0);
 const GLchar* fragmentSource = R"glsl(
     #version 150 core
     
@@ -74,7 +64,10 @@ const GLchar* fragmentSource =
     */
 int main(int argc, char * argv[]) {
 
-    auto t_start = std::chrono::high_resolution_clock::now();
+    float x, y, z;
+    y = 90.0;
+    x = 45.0;
+    z = 0;
 
     int windowWidth = 800; // mWidth for full window
     int windowHeight = 600; // mHeight for full window
@@ -103,6 +96,9 @@ int main(int argc, char * argv[]) {
     if(!gladLoadGL()) {
         fprintf(stderr, "Failed to Load OpenGL");
     }
+
+
+
     
 // Create Vertex Array Object
     GLuint vao;
@@ -118,31 +114,16 @@ int main(int argc, char * argv[]) {
 
     GLuint ebo;
     glGenBuffers(1, &ebo);
-    /*
-    GLfloat vertices[] = {
-         0.0f,  0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f
-    };
-
-    GLfloat colors[] = {
-         0.0f,  1.0f, 0.0f,
-         1.0f,  0.0f, 0.0f,
-         0.0f,  0.0f, 1.0f,
-    };
-
-    GLuint elements[] = {
-	    0, 1, 2
-    };
-    */
-
-    GLfloat vertices[VERTICES_SIZE];
-    GLfloat colors[COLORS_SIZE];
-    GLuint elements[ELEMENTS_SIZE];
+    const int vertices_size = (53215 + 1) * 3;
+    const int elements_size = 105840 * 3;
+    const int colors_size = vertices_size;
+    GLfloat vertices[vertices_size];
+    GLfloat colors[colors_size];
+    GLuint elements[elements_size];
     input("../input/shape.txt", (vertices + 3));
     input("../input/texture.txt", (colors + 3));
     input("../input/triangulation.txt", elements);
-    for (int n = 0; n < COLORS_SIZE; n++) {
+    for (int n = 0; n < colors_size; n++) {
         colors[n] = colors[n] / 255.;
     }
 
@@ -170,6 +151,27 @@ int main(int argc, char * argv[]) {
     glLinkProgram(shaderProgram);
     glUseProgram(shaderProgram);
 
+    glm::mat4 trans;
+    trans = glm::rotate(trans, glm::radians(x), glm::vec3(1.0f, 0.0f, 0.0f));
+    trans = glm::rotate(trans, glm::radians(y), glm::vec3(0.0f, 1.0f, 0.0f));
+    trans = glm::rotate(trans, glm::radians(z), glm::vec3(0.0f, 0.0f, 1.0f));
+    //trans = glm::translate(trans, glm::vec3(0.0, 0.0, 1.0));
+    GLint uniTrans = glGetUniformLocation(shaderProgram, "trans");
+    glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(trans));
+
+
+    glm::mat4 view = glm::lookAt(
+		     glm::vec3(0.0f, 0.0f, 3.0f),
+		     glm::vec3(0.0f, 0.0f, 0.0f),
+		     glm::vec3(0.0f, 1.0f, 0.0f)
+		    );
+    GLint uniView = glGetUniformLocation(shaderProgram, "view");
+    glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
+
+    glm::mat4 proj = glm::perspective(glm::radians(60.0f), 800.0f / 600.0f, 1.0f, 10.0f);
+    GLint uniProj = glGetUniformLocation(shaderProgram, "proj");
+    glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
+
     // Specify the layout of the vertex data
     GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
     glEnableVertexAttribArray(posAttrib);
@@ -182,34 +184,7 @@ int main(int argc, char * argv[]) {
     glEnableVertexAttribArray(colorAttrib);
     glVertexAttribPointer(colorAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-    // Calculate Transformation
-    glm::mat4 model;
-    model = glm::rotate(
-      model,
-      glm::radians(180.0f),       // degrees of rotation
-      glm::vec3(0.0f, 0.0f, 1.0f) // axis of rotation
-      );
-    GLint uniModel = glGetUniformLocation(shaderProgram, "model");
-    glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
-/*
-    glm::mat4 view = glm::lookAt(
-      glm::vec3(0.0f, 0.0f, -2.0f), // position of camera
-      glm::vec3(0.0f, 0.0f, 0.0f), // point to be centered on-screen
-      glm::vec3(0.0f, 1.0f, 0.0f)  // up axis
-      );
-    GLint uniView = glGetUniformLocation(shaderProgram, "view");
-    glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
-*/
-    glm::mat4 proj = glm::perspective(
-      glm::radians(45.0f), // vertical field of view
-      800.0f / 600.0f,     // aspect ratio of screen
-      1.0f,                // near clipping plane
-      10.0f                // far clipping plane
-      );
-    GLint uniProj = glGetUniformLocation(shaderProgram, "proj");
-    glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
-
-
+    glEnable(GL_DEPTH_TEST);
     // Rendering Loop
     while (glfwWindowShouldClose(mWindow) == false) {
         if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -217,22 +192,10 @@ int main(int argc, char * argv[]) {
 
         // Background Fill Color
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        // Animation
-        auto t_now = std::chrono::high_resolution_clock::now();
-        float time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
-
-        glm::mat4 view = glm::lookAt(
-          glm::vec3(0.0f, 0.0f, -3.0f + fmod(time, 4)), // position of camera
-          glm::vec3(0.0f, 0.0f, 0.0f), // point to be centered on-screen
-          glm::vec3(0.0f, 1.0f, 0.0f)  // up axis
-          );
-        GLint uniView = glGetUniformLocation(shaderProgram, "view");
-        glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
-
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
         /** DRAW HERE **/
-        glDrawElements(GL_TRIANGLES, ELEMENTS_SIZE, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, elements_size, GL_UNSIGNED_INT, 0);
 
         // Flip Buffers and Draw
         glfwSwapBuffers(mWindow);
