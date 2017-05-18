@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <chrono>
 
 // Standard Headers
 #include <cstdio>
@@ -19,6 +20,16 @@
 #define PIXEL_SIZE 2
 #define SCREEN_OFFSET 0
 
+// Rotations About Axis                         --- Add Functionality for Roll, Pitch, Yaw
+const float x = 0;
+const float y = 30;
+const float z = 0;
+
+// Data Size                                    --- Fix Error Checking for Incorrect Data Size
+const int VERTICES_SIZE = (53215 + 1) * 3; 
+const int ELEMENTS_SIZE = 105840 * 3;
+const int COLORS_SIZE = VERTICES_SIZE;
+
 // Shader sources
 const GLchar* vertexSource = R"glsl(
     #version 150 core
@@ -27,13 +38,13 @@ const GLchar* vertexSource = R"glsl(
 
     out vec3 Color;
 
-    uniform mat4 trans;
+    uniform mat4 model;
     uniform mat4 view;
     uniform mat4 proj;
     void main()
     {
 	Color = color;
-        gl_Position = proj * view * trans * vec4(position, 1.0);
+        gl_Position = proj * view * model * vec4(position, 1.0);
     }
 )glsl";
 const GLchar* fragmentSource = R"glsl(
@@ -49,10 +60,7 @@ const GLchar* fragmentSource = R"glsl(
 
 int main(int argc, char * argv[]) {
 
-    float x, y, z;
-    y = 30;
-    x = 0;
-    z = 0;
+    auto t_start = std::chrono::high_resolution_clock::now();
 
     int windowWidth = 800;
     int windowHeight = 600;
@@ -99,16 +107,16 @@ int main(int argc, char * argv[]) {
 
     GLuint ebo;
     glGenBuffers(1, &ebo);
-    const int vertices_size = (53215 + 1) * 3;
-    const int elements_size = 105840 * 3;
-    const int colors_size = vertices_size;
-    GLfloat vertices[vertices_size];
-    GLfloat colors[colors_size];
-    GLuint elements[elements_size];
+
+    // Load Data From File
+    GLfloat vertices[VERTICES_SIZE];
+    GLfloat colors[COLORS_SIZE];
+    GLuint elements[ELEMENTS_SIZE];
     input("../input/shape.txt", (vertices + 3));
     input("../input/texture.txt", (colors + 3));
     input("../input/triangulation.txt", elements);
-    for (int n = 0; n < colors_size; n++) {
+    // Shift Texture Map for 1-Indexing
+    for (int n = 0; n < COLORS_SIZE; n++) {
         colors[n] = colors[n] / 255.;
     }
 
@@ -136,24 +144,29 @@ int main(int argc, char * argv[]) {
     glLinkProgram(shaderProgram);
     glUseProgram(shaderProgram);
 
-    glm::mat4 trans;
-    trans = glm::rotate(trans, glm::radians(x), glm::vec3(1.0f, 0.0f, 0.0f));
-    trans = glm::rotate(trans, glm::radians(y), glm::vec3(0.0f, 1.0f, 0.0f));
-    trans = glm::rotate(trans, glm::radians(z), glm::vec3(0.0f, 0.0f, 1.0f));
-    //trans = glm::translate(trans, glm::vec3(0.0, 0.0, 1.0));
-    GLint uniTrans = glGetUniformLocation(shaderProgram, "trans");
-    glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(trans));
-
+    // Calculate Transformation
+    glm::mat4 model;
+    model = glm::rotate(model, glm::radians(x), glm::vec3(1.0f, 0.0f, 0.0f)); // rotation about x-axis
+    model = glm::rotate(model, glm::radians(y), glm::vec3(0.0f, 1.0f, 0.0f)); // rotation about y-axis
+    model = glm::rotate(model, glm::radians(z), glm::vec3(0.0f, 0.0f, 1.0f)); // rotation about z-axis
+    //model = glm::translate(model, glm::vec3(0.0, 0.0, 1.0));
+    GLint uniModel = glGetUniformLocation(shaderProgram, "model");
+    glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
 
     glm::mat4 view = glm::lookAt(
-		     glm::vec3(0.0f, 0.0f, -3.0f),
-		     glm::vec3(0.0f, 0.0f, 0.0f),
-		     glm::vec3(0.0f, 1.0f, 0.0f)
+		     glm::vec3(0.0f, 0.0f, -3.0f), // camera position
+		     glm::vec3(0.0f, 0.0f, 0.0f),  // point to be centered on-screen
+		     glm::vec3(0.0f, 1.0f, 0.0f)   // up vector
 		    );
     GLint uniView = glGetUniformLocation(shaderProgram, "view");
     glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
 
-    glm::mat4 proj = glm::perspective(glm::radians(60.0f), 800.0f / 600.0f, 1.0f, 10.0f);
+    glm::mat4 proj = glm::perspective(
+        glm::radians(45.0f), // vertical field of view 
+        800.0f / 600.0f,     // screen aspect ratio
+        1.0f,                // near clipping plane
+        10.0f                // far clipping plane
+        );
     GLint uniProj = glGetUniformLocation(shaderProgram, "proj");
     glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
 
@@ -180,7 +193,7 @@ int main(int argc, char * argv[]) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
         /** DRAW HERE **/
-        glDrawElements(GL_TRIANGLES, elements_size, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, ELEMENTS_SIZE, GL_UNSIGNED_INT, 0);
 
         // Flip Buffers and Draw
         glfwSwapBuffers(mWindow);
