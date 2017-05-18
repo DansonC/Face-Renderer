@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <string>
 #include <cstring>
+#include <math.h>
 
 // Support Headers
 #include "../include/io.hpp"
@@ -21,9 +22,11 @@
 #define SCREEN_OFFSET 0
 
 // Rotations About Axis                         --- Add Functionality for Roll, Pitch, Yaw
-const float x = 0;
-const float y = 30;
-const float z = 0;
+float x = 0;
+float y = 0;
+float z = 0;
+const float ANIME_ROT_SPEED = 20;
+const float ROT_SPEED = 2;
 
 // Data Size                                    --- Fix Error Checking for Incorrect Data Size
 const int VERTICES_SIZE = (53215 + 1) * 3; 
@@ -44,7 +47,7 @@ const GLchar* vertexSource = R"glsl(
     void main()
     {
 	Color = color;
-        gl_Position = proj * view * model * vec4(position, 1.0);
+        gl_Position = proj * view * model * vec4(-1 * position.x, position.y, position.z, 1.0);
     }
 )glsl";
 const GLchar* fragmentSource = R"glsl(
@@ -145,13 +148,22 @@ int main(int argc, char * argv[]) {
     glUseProgram(shaderProgram);
 
     // Calculate Transformation
+    /*
     glm::mat4 model;
     model = glm::rotate(model, glm::radians(x), glm::vec3(1.0f, 0.0f, 0.0f)); // rotation about x-axis
     model = glm::rotate(model, glm::radians(y), glm::vec3(0.0f, 1.0f, 0.0f)); // rotation about y-axis
     model = glm::rotate(model, glm::radians(z), glm::vec3(0.0f, 0.0f, 1.0f)); // rotation about z-axis
     //model = glm::translate(model, glm::vec3(0.0, 0.0, 1.0));
+    
+    model = glm::rotate(
+        model,
+        glm::radians(0.0f),
+        glm::vec3(0.0f, 0.0f, 1.0f)
+        );
+    
     GLint uniModel = glGetUniformLocation(shaderProgram, "model");
     glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
+    */
 
     glm::mat4 view = glm::lookAt(
 		     glm::vec3(0.0f, 0.0f, -3.0f), // camera position
@@ -162,8 +174,8 @@ int main(int argc, char * argv[]) {
     glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
 
     glm::mat4 proj = glm::perspective(
-        glm::radians(45.0f), // vertical field of view 
-        800.0f / 600.0f,     // screen aspect ratio
+        glm::radians(60.0f), // vertical field of view 
+        600.0f / 600.0f,     // screen aspect ratio
         1.0f,                // near clipping plane
         10.0f                // far clipping plane
         );
@@ -185,13 +197,46 @@ int main(int argc, char * argv[]) {
     glEnable(GL_DEPTH_TEST);
     // Rendering Loop
     while (glfwWindowShouldClose(mWindow) == false) {
+
+        // Keyboard Event Handling
         if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(mWindow, true);
+
+        if (glfwGetKey(mWindow, GLFW_KEY_LEFT) == GLFW_PRESS)
+            y -= ROT_SPEED;
+
+        if (glfwGetKey(mWindow, GLFW_KEY_RIGHT) == GLFW_PRESS)
+            y += ROT_SPEED;
+
+        if (glfwGetKey(mWindow, GLFW_KEY_UP) == GLFW_PRESS)
+            x += ROT_SPEED;
+
+        if (glfwGetKey(mWindow, GLFW_KEY_DOWN) == GLFW_PRESS)
+            x -= ROT_SPEED;
+
+        if (glfwGetKey(mWindow, GLFW_KEY_LEFT_BRACKET) == GLFW_PRESS)
+            z -= ROT_SPEED;
+
+        if (glfwGetKey(mWindow, GLFW_KEY_RIGHT_BRACKET) == GLFW_PRESS)
+            z += ROT_SPEED;
+
+
+        // Animation
+        //auto t_now = std::chrono::high_resolution_clock::now();
+        //float time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
+        //y = fmod(time * ROT_SPEED, 360);
 
         // Background Fill Color
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
+        glm::mat4 model;
+        model = glm::rotate(model, glm::radians(x), glm::vec3(1.0f, 0.0f, 0.0f)); // rotation about x-axis
+        model = glm::rotate(model, glm::radians(y), glm::vec3(0.0f, 1.0f, 0.0f)); // rotation about y-axis
+        model = glm::rotate(model, glm::radians(z), glm::vec3(0.0f, 0.0f, 1.0f)); // rotation about z-axis        
+        GLint uniModel = glGetUniformLocation(shaderProgram, "model");
+        glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
+
         /** DRAW HERE **/
         glDrawElements(GL_TRIANGLES, ELEMENTS_SIZE, GL_UNSIGNED_INT, 0);
 
