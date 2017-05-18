@@ -22,12 +22,20 @@
 #define SCREEN_OFFSET 0
 
 // Rotations About Axis                                 --- Add Functionality for Roll, Pitch, Yaw
+float camera_x = 0.; // degrees of rotation about x-axis
+float camera_y = 0.; // degrees of rotation about y-axis
+float camera_z = -3.; // degrees of rotation about y-axis
+float focus_x = 0.; // degrees of rotation about x-axis
+float focus_y = 0.; // degrees of rotation about y-axis
+float focus_z = 0.; // degrees of rotation about y-axis
 float x = 0.; // degrees of rotation about x-axis
 float y = 0.; // degrees of rotation about y-axis
 float z = 0.; // degrees of rotation about y-axis
 const float ANIME_ROT_SPEED = 20.; // animated rotation speed
 const float ROT_SPEED = 2.;        // keyboard input rotation speed
-float zoom = 30.;                  // zoom
+const float INCREMENT = 0.1;
+float zoom = 45.;                  // zoom
+float aspect = 800. / 600.;        // aspect ratio
 
 // Data Size                                            --- Fix Error Checking for Incorrect Data Size
 const int VERTICES_SIZE = (53215 + 1) * 3; 
@@ -94,9 +102,6 @@ int main(int argc, char * argv[]) {
         fprintf(stderr, "Failed to Load OpenGL");
     }
 
-
-
-    
 // Create Vertex Array Object
     GLuint vao;
     glGenVertexArrays(1, &vao);
@@ -148,32 +153,6 @@ int main(int argc, char * argv[]) {
     glLinkProgram(shaderProgram);
     glUseProgram(shaderProgram);
 
-    // Calculate Transformation
-    /*
-    glm::mat4 model;
-    model = glm::rotate(model, glm::radians(x), glm::vec3(1.0f, 0.0f, 0.0f)); // rotation about x-axis
-    model = glm::rotate(model, glm::radians(y), glm::vec3(0.0f, 1.0f, 0.0f)); // rotation about y-axis
-    model = glm::rotate(model, glm::radians(z), glm::vec3(0.0f, 0.0f, 1.0f)); // rotation about z-axis
-    //model = glm::translate(model, glm::vec3(0.0, 0.0, 1.0));
-    
-    model = glm::rotate(
-        model,
-        glm::radians(0.0f),
-        glm::vec3(0.0f, 0.0f, 1.0f)
-        );
-    
-    GLint uniModel = glGetUniformLocation(shaderProgram, "model");
-    glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
-    */
-
-    glm::mat4 view = glm::lookAt(
-		     glm::vec3(0.0f, 0.0f, -3.0f), // camera position
-		     glm::vec3(0.0f, 0.0f, 0.0f),  // point to be centered on-screen
-		     glm::vec3(0.0f, 1.0f, 0.0f)   // up vector
-		    );
-    GLint uniView = glGetUniformLocation(shaderProgram, "view");
-    glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
-
     // Specify the layout of the vertex data
     GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
     glEnableVertexAttribArray(posAttrib);
@@ -186,38 +165,66 @@ int main(int argc, char * argv[]) {
     glEnableVertexAttribArray(colorAttrib);
     glVertexAttribPointer(colorAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
+    // Add Occlusion Test
     glEnable(GL_DEPTH_TEST);
+
     // Rendering Loop
     while (glfwWindowShouldClose(mWindow) == false) {
 
-        // Keyboard Event Handling
+        // Keyboard Event Handling                                         ---READ KEY and SWITCH TABLE FUNCTION
         if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(mWindow, true);
 
-        if (glfwGetKey(mWindow, GLFW_KEY_LEFT) == GLFW_PRESS)
-            y -= ROT_SPEED;
-
-        if (glfwGetKey(mWindow, GLFW_KEY_RIGHT) == GLFW_PRESS)
-            y += ROT_SPEED;
-
         if (glfwGetKey(mWindow, GLFW_KEY_UP) == GLFW_PRESS)
             x += ROT_SPEED;
-
         if (glfwGetKey(mWindow, GLFW_KEY_DOWN) == GLFW_PRESS)
             x -= ROT_SPEED;
-
+        if (glfwGetKey(mWindow, GLFW_KEY_LEFT) == GLFW_PRESS)
+            y -= ROT_SPEED;
+        if (glfwGetKey(mWindow, GLFW_KEY_RIGHT) == GLFW_PRESS)
+            y += ROT_SPEED;
         if (glfwGetKey(mWindow, GLFW_KEY_LEFT_BRACKET) == GLFW_PRESS)
             z -= ROT_SPEED;
-
         if (glfwGetKey(mWindow, GLFW_KEY_RIGHT_BRACKET) == GLFW_PRESS)
             z += ROT_SPEED;
 
+        if (glfwGetKey(mWindow, GLFW_KEY_KP_6) == GLFW_PRESS)
+            camera_x += INCREMENT;
+        if (glfwGetKey(mWindow, GLFW_KEY_KP_4) == GLFW_PRESS)
+            camera_x -= INCREMENT;
+        if (glfwGetKey(mWindow, GLFW_KEY_KP_2) == GLFW_PRESS)
+            camera_y -= INCREMENT;
+        if (glfwGetKey(mWindow, GLFW_KEY_KP_8) == GLFW_PRESS)
+            camera_y += INCREMENT;
+        if (glfwGetKey(mWindow, GLFW_KEY_KP_1) == GLFW_PRESS)
+            camera_z -= INCREMENT;
+        if (glfwGetKey(mWindow, GLFW_KEY_KP_3) == GLFW_PRESS)
+            camera_z += INCREMENT;
+
+        if (glfwGetKey(mWindow, GLFW_KEY_D) == GLFW_PRESS)
+            focus_x += INCREMENT;
+        if (glfwGetKey(mWindow, GLFW_KEY_A) == GLFW_PRESS)
+            focus_x -= INCREMENT;
+        if (glfwGetKey(mWindow, GLFW_KEY_X) == GLFW_PRESS)
+            focus_y -= INCREMENT;
+        if (glfwGetKey(mWindow, GLFW_KEY_W) == GLFW_PRESS)
+            focus_y += INCREMENT;
+        if (glfwGetKey(mWindow, GLFW_KEY_Z) == GLFW_PRESS)
+            focus_z -= INCREMENT;
+        if (glfwGetKey(mWindow, GLFW_KEY_C) == GLFW_PRESS)
+            focus_z += INCREMENT;
+
+
         if (glfwGetKey(mWindow, GLFW_KEY_MINUS) == GLFW_PRESS)
             zoom = fmod(zoom + ROT_SPEED, 180);
-
         if (glfwGetKey(mWindow, GLFW_KEY_EQUAL) == GLFW_PRESS)
             zoom = fmod(zoom - ROT_SPEED, 180);
 
+        if (glfwGetKey(mWindow, GLFW_KEY_COMMA) == GLFW_PRESS)
+            aspect += 0.1;
+        if (glfwGetKey(mWindow, GLFW_KEY_PERIOD) == GLFW_PRESS)
+            aspect -= 0.1;
+        
 
         // Animation
         //auto t_now = std::chrono::high_resolution_clock::now();
@@ -228,6 +235,16 @@ int main(int argc, char * argv[]) {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
+        // Calculate Transformation
+        glm::mat4 view = glm::lookAt(
+                 glm::vec3(camera_x, camera_y, camera_z), // camera position
+                 glm::vec3(focus_x, focus_y, focus_z),  // point to be centered on-screen
+                 glm::vec3(0.0f, 1.0f, 0.0f)   // up vector
+                );
+        GLint uniView = glGetUniformLocation(shaderProgram, "view");
+        glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
+
+
         glm::mat4 model;
         model = glm::rotate(model, glm::radians(x), glm::vec3(1.0f, 0.0f, 0.0f)); // rotation about x-axis
         model = glm::rotate(model, glm::radians(y), glm::vec3(0.0f, 1.0f, 0.0f)); // rotation about y-axis
@@ -236,10 +253,10 @@ int main(int argc, char * argv[]) {
         glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
 
         glm::mat4 proj = glm::perspective(
-        glm::radians(zoom), // vertical field of view 
-        800.0f / 600.0f,     // screen aspect ratio
-        1.0f,                // near clipping plane
-        10.0f                // far clipping plane
+        glm::radians(zoom),   // vertical field of view 
+        aspect,               // screen aspect ratio
+        0.1f,                 // near clipping plane
+        100.0f                // far clipping plane
         );
         GLint uniProj = glGetUniformLocation(shaderProgram, "proj");
         glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
@@ -251,5 +268,6 @@ int main(int argc, char * argv[]) {
         glfwSwapBuffers(mWindow);
         glfwPollEvents();
     }   glfwTerminate();
+
     return EXIT_SUCCESS;
 }
