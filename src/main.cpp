@@ -21,14 +21,15 @@
 #define PIXEL_SIZE 2
 #define SCREEN_OFFSET 0
 
-// Rotations About Axis                         --- Add Functionality for Roll, Pitch, Yaw
-float x = 0;
-float y = 0;
-float z = 0;
-const float ANIME_ROT_SPEED = 20;
-const float ROT_SPEED = 2;
+// Rotations About Axis                                 --- Add Functionality for Roll, Pitch, Yaw
+float x = 0.; // degrees of rotation about x-axis
+float y = 0.; // degrees of rotation about y-axis
+float z = 0.; // degrees of rotation about y-axis
+const float ANIME_ROT_SPEED = 20.; // animated rotation speed
+const float ROT_SPEED = 2.;        // keyboard input rotation speed
+float zoom = 30.;                  // zoom
 
-// Data Size                                    --- Fix Error Checking for Incorrect Data Size
+// Data Size                                            --- Fix Error Checking for Incorrect Data Size
 const int VERTICES_SIZE = (53215 + 1) * 3; 
 const int ELEMENTS_SIZE = 105840 * 3;
 const int COLORS_SIZE = VERTICES_SIZE;
@@ -173,15 +174,6 @@ int main(int argc, char * argv[]) {
     GLint uniView = glGetUniformLocation(shaderProgram, "view");
     glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
 
-    glm::mat4 proj = glm::perspective(
-        glm::radians(60.0f), // vertical field of view 
-        600.0f / 600.0f,     // screen aspect ratio
-        1.0f,                // near clipping plane
-        10.0f                // far clipping plane
-        );
-    GLint uniProj = glGetUniformLocation(shaderProgram, "proj");
-    glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
-
     // Specify the layout of the vertex data
     GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
     glEnableVertexAttribArray(posAttrib);
@@ -220,6 +212,12 @@ int main(int argc, char * argv[]) {
         if (glfwGetKey(mWindow, GLFW_KEY_RIGHT_BRACKET) == GLFW_PRESS)
             z += ROT_SPEED;
 
+        if (glfwGetKey(mWindow, GLFW_KEY_MINUS) == GLFW_PRESS)
+            zoom = fmod(zoom + ROT_SPEED, 180);
+
+        if (glfwGetKey(mWindow, GLFW_KEY_EQUAL) == GLFW_PRESS)
+            zoom = fmod(zoom - ROT_SPEED, 180);
+
 
         // Animation
         //auto t_now = std::chrono::high_resolution_clock::now();
@@ -236,6 +234,15 @@ int main(int argc, char * argv[]) {
         model = glm::rotate(model, glm::radians(z), glm::vec3(0.0f, 0.0f, 1.0f)); // rotation about z-axis        
         GLint uniModel = glGetUniformLocation(shaderProgram, "model");
         glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
+
+        glm::mat4 proj = glm::perspective(
+        glm::radians(zoom), // vertical field of view 
+        800.0f / 600.0f,     // screen aspect ratio
+        1.0f,                // near clipping plane
+        10.0f                // far clipping plane
+        );
+        GLint uniProj = glGetUniformLocation(shaderProgram, "proj");
+        glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
 
         /** DRAW HERE **/
         glDrawElements(GL_TRIANGLES, ELEMENTS_SIZE, GL_UNSIGNED_INT, 0);
