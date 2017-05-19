@@ -1,3 +1,6 @@
+//-------------------//
+//---   Headers   ---//
+//-------------------//
 // System Headers
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -15,35 +18,11 @@
 
 // Support Headers
 #include "../include/io.hpp"
+#include "../include/event_handler.hpp"
 
-#define SCREEN_WIDTH 4
-#define SCREEN_HEIGHT 4
-#define PIXEL_SIZE 2
-#define SCREEN_OFFSET 0
-
-// Rotations About Axis                                 --- Add Functionality for Roll, Pitch, Yaw
-float camera_x = 0.; // degrees of rotation about x-axis
-float camera_y = 0.; // degrees of rotation about y-axis
-float camera_z = -100.; // degrees of rotation about y-axis
-float focus_x = 0.; // degrees of rotation about x-axis
-float focus_y = 0.; // degrees of rotation about y-axis
-float focus_z = 0.; // degrees of rotation about y-axis
-float x = 0.; // degrees of rotation about x-axis
-float y = 0.; // degrees of rotation about y-axis
-float z = 0.; // degrees of rotation about y-axis
-const float ANIME_ROT_SPEED = 20.; // animated rotation speed
-const float ROT_SPEED = 2.;        // keyboard input rotation speed
-const float ZOOM_SPEED = 0.1;      // zoom sensitivity
-const float DEPTH_SPEED = 10;      // depth field sensitivity
-const float FOCUS_SPEED = 0.1;     // focus translation sensitivity
-float zoom = 1;                    // zoom
-float aspect = 800. / 600.;        // aspect ratio
-
-// Data Size                                            --- Fix Error Checking for Incorrect Data Size
-const int VERTICES_SIZE = (53215 + 1) * 3; 
-const int ELEMENTS_SIZE = 105840 * 3;
-const int COLORS_SIZE = VERTICES_SIZE;
-
+//-----------------------------//
+//---   OpenGL Constructs   ---//
+//-----------------------------//
 // Shader sources
 const GLchar* vertexSource = R"glsl(
     #version 150 core
@@ -72,9 +51,14 @@ const GLchar* fragmentSource = R"glsl(
     }
 )glsl";
 
+//parameter params = parameters();
+
 int main(int argc, char * argv[]) {
 
     auto t_start = std::chrono::high_resolution_clock::now();
+    float prev_time = 0;
+
+    cout << params.camera_z << endl;
 
     int windowWidth = 800;
     int windowHeight = 600;
@@ -90,7 +74,7 @@ int main(int argc, char * argv[]) {
     //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     //glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-    auto mWindow = glfwCreateWindow(windowWidth, windowHeight, "Face Triangulation", nullptr, nullptr);
+    GLFWwindow *mWindow = glfwCreateWindow(windowWidth, windowHeight, "Face Triangulation", nullptr, nullptr);
 
     // Check for Valid Context
     if (mWindow == nullptr) {
@@ -170,68 +154,18 @@ int main(int argc, char * argv[]) {
     // Add Occlusion Test
     glEnable(GL_DEPTH_TEST);
 
+    //Keyboard Event Handling
+    glfwSetKeyCallback(mWindow, key_callback);   
+
     // Rendering Loop
     while (glfwWindowShouldClose(mWindow) == false) {
-
-        // Keyboard Event Handling                                         ---READ KEY and SWITCH TABLE FUNCTION
-        if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-            glfwSetWindowShouldClose(mWindow, true);
-
-        if (glfwGetKey(mWindow, GLFW_KEY_UP) == GLFW_PRESS)
-            x += ROT_SPEED;
-        if (glfwGetKey(mWindow, GLFW_KEY_DOWN) == GLFW_PRESS)
-            x -= ROT_SPEED;
-        if (glfwGetKey(mWindow, GLFW_KEY_LEFT) == GLFW_PRESS)
-            y -= ROT_SPEED;
-        if (glfwGetKey(mWindow, GLFW_KEY_RIGHT) == GLFW_PRESS)
-            y += ROT_SPEED;
-        if (glfwGetKey(mWindow, GLFW_KEY_LEFT_BRACKET) == GLFW_PRESS)
-            z -= ROT_SPEED;
-        if (glfwGetKey(mWindow, GLFW_KEY_RIGHT_BRACKET) == GLFW_PRESS)
-            z += ROT_SPEED;
-
-        if (glfwGetKey(mWindow, GLFW_KEY_KP_6) == GLFW_PRESS)
-            camera_x += DEPTH_SPEED;
-        if (glfwGetKey(mWindow, GLFW_KEY_KP_4) == GLFW_PRESS)
-            camera_x -= DEPTH_SPEED;
-        if (glfwGetKey(mWindow, GLFW_KEY_KP_2) == GLFW_PRESS)
-            camera_y -= DEPTH_SPEED;
-        if (glfwGetKey(mWindow, GLFW_KEY_KP_8) == GLFW_PRESS)
-            camera_y += DEPTH_SPEED;
-        if (glfwGetKey(mWindow, GLFW_KEY_KP_1) == GLFW_PRESS)
-            camera_z -= DEPTH_SPEED;
-        if (glfwGetKey(mWindow, GLFW_KEY_KP_3) == GLFW_PRESS)
-            camera_z += DEPTH_SPEED;
-
-        if (glfwGetKey(mWindow, GLFW_KEY_D) == GLFW_PRESS)
-            focus_x += FOCUS_SPEED;
-        if (glfwGetKey(mWindow, GLFW_KEY_A) == GLFW_PRESS)
-            focus_x -= FOCUS_SPEED;
-        if (glfwGetKey(mWindow, GLFW_KEY_X) == GLFW_PRESS)
-            focus_y -= FOCUS_SPEED;
-        if (glfwGetKey(mWindow, GLFW_KEY_W) == GLFW_PRESS)
-            focus_y += FOCUS_SPEED;
-        if (glfwGetKey(mWindow, GLFW_KEY_Z) == GLFW_PRESS)
-            focus_z -= FOCUS_SPEED;
-        if (glfwGetKey(mWindow, GLFW_KEY_C) == GLFW_PRESS)
-            focus_z += FOCUS_SPEED;
-
-
-        if (glfwGetKey(mWindow, GLFW_KEY_MINUS) == GLFW_PRESS)
-            zoom = fmod(zoom + ZOOM_SPEED, 180);
-        if (glfwGetKey(mWindow, GLFW_KEY_EQUAL) == GLFW_PRESS)
-            zoom = fmod(zoom - ZOOM_SPEED, 180);
-
-        if (glfwGetKey(mWindow, GLFW_KEY_COMMA) == GLFW_PRESS)
-            aspect += 0.1;
-        if (glfwGetKey(mWindow, GLFW_KEY_PERIOD) == GLFW_PRESS)
-            aspect -= 0.1;
-        
-
         // Animation
-        //auto t_now = std::chrono::high_resolution_clock::now();
-        //float time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
+        auto t_now = std::chrono::high_resolution_clock::now();
+        float time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
+        float delta_time = time - prev_time;
+        prev_time = time;
         //y = fmod(time * ROT_SPEED, 360);
+        
 
         // Background Fill Color
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -239,29 +173,30 @@ int main(int argc, char * argv[]) {
         
         // Calculate Transformation
         glm::mat4 view = glm::lookAt(
-                 glm::vec3(camera_x, camera_y, camera_z), // camera position
-                 glm::vec3(focus_x, focus_y, focus_z),  // point to be centered on-screen
+                 glm::vec3(params.camera_x, params.camera_y, params.camera_z), // camera position
+                 glm::vec3(params.focus_x, params.focus_y, params.focus_z),  // point to be centered on-screen
                  glm::vec3(0.0f, 1.0f, 0.0f)   // up vector
                 );
         GLint uniView = glGetUniformLocation(shaderProgram, "view");
         glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
 
-
+        /*
         glm::mat4 model;
-        model = glm::rotate(model, glm::radians(x), glm::vec3(1.0f, 0.0f, 0.0f)); // rotation about x-axis
-        model = glm::rotate(model, glm::radians(y), glm::vec3(0.0f, 1.0f, 0.0f)); // rotation about y-axis
-        model = glm::rotate(model, glm::radians(z), glm::vec3(0.0f, 0.0f, 1.0f)); // rotation about z-axis        
+        model = glm::rotate(model, glm::radians(params.x), glm::vec3(1.0f, 0.0f, 0.0f)); // rotation about x-axis
+        model = glm::rotate(model, glm::radians(params.y), glm::vec3(0.0f, 1.0f, 0.0f)); // rotation about y-axis
+        model = glm::rotate(model, glm::radians(params.z), glm::vec3(0.0f, 0.0f, 1.0f)); // rotation about z-axis        
         GLint uniModel = glGetUniformLocation(shaderProgram, "model");
         glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
 
         glm::mat4 proj = glm::perspective(
-        glm::radians(zoom),   // vertical field of view 
-        aspect,               // screen aspect ratio
+        glm::radians(params.zoom),   // vertical field of view 
+        params.aspect,               // screen aspect ratio
         0.1f,                 // near clipping plane
         200.0f                // far clipping plane
         );
         GLint uniProj = glGetUniformLocation(shaderProgram, "proj");
         glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
+        */
 
         /** DRAW HERE **/
         glDrawElements(GL_TRIANGLES, ELEMENTS_SIZE, GL_UNSIGNED_INT, 0);
