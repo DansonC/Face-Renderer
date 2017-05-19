@@ -3,9 +3,12 @@
 #ifndef IO_HPP
 #define IO_HPP
 
+//-------------------//
+//---   Headers   ---//
+//-------------------//
+// System Headers
 #include <glad/glad.h>
-//#include <GLFW/glfw3.h>
-
+// Standard Headers
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>

@@ -3,15 +3,28 @@
 #ifndef EVENT_HANDLER_HPP
 #define EVENT_HANDLER_HPP
 
+//-------------------//
+//---   Headers   ---//
+//-------------------//
+// System Headers
+#include <GLFW/glfw3.h>
+// Standard Headers
+#include <stdlib.h>
+#include <iostream>
+#include <math.h>
+
+using namespace std;
+
 //---------------------//
 //---   Constants   ---//
 //---------------------//
 // Speed Constants
-const float ANIME_ROT_SPEED = 20.; // animated rotation speed
-const float ROT_SPEED = 2.;        // keyboard input rotation speed
-const float ZOOM_SPEED = 0.1;      // zoom sensitivity
-const float DEPTH_SPEED = 10.;      // depth field sensitivity
-const float FOCUS_SPEED = 0.1;     // focus translation sensitivity
+//const float ANIME_ROT_SPEED = 20.; 	// animated rotation speed
+const float ROT_DEGREE = 1;        	    // keyboard input rotation speed
+const float VFOV_DEGREE = 0.2;      	    // field of view angle--zoom sensitivity
+const float DEPTH_INCR = 0.5;      		// depth field sensitivity
+const float FOCUS_INCR = 0.05;     		// focus translation sensitivity
+const float FRAME_RATE = 100; 			// seconds before update transformations
 
 // Data Size                                            --- Fix Error Checking for Incorrect Data Size
 const int VERTICES_SIZE = (53215 + 1) * 3; 
@@ -33,14 +46,14 @@ typedef struct Render_Parameters {
     float rot_y; 		// degrees of rotation about y-axis
     float rot_z; 		// degrees of rotation about y-axis
 
-    float zoom;         // zoom
+    float vfov;         // zoom
     float aspect;       // aspect ratio
 
     // Constructor
     Render_Parameters() :
 	    camera_x  	(0.), 			// degrees of rotation about x-axis
 	    camera_y  	(0.), 			// degrees of rotation about y-axis
-	    camera_z  	(-100.), 		// degrees of rotation about y-axis
+	    camera_z  	(-20.), 		// degrees of rotation about y-axis
 	    focus_x 	(0.), 			// degrees of rotation about x-axis
 	    focus_y 	(0.), 			// degrees of rotation about y-axis
 	    focus_z 	(0.),			// degrees of rotation about y-axis
@@ -48,7 +61,7 @@ typedef struct Render_Parameters {
 	    rot_y 		(0.), 			// degrees of rotation about y-axis
 	    rot_z 		(0.), 			// degrees of rotation about y-axis
 
-	    zoom 		(1),         	// zoom
+	    vfov 		(8.),         	// vertical field of view/zoom
 	    aspect 		(800. / 600.)   // aspect ratio
     {
     	// Initializations
@@ -56,8 +69,6 @@ typedef struct Render_Parameters {
 } parameters;
 
 void handle_events(GLFWwindow *mWindow, parameters &params);
-
-void handle_events(GLFWwindow *mWindow, struct Render_Parameters &params);
 
 void key_callback(GLFWwindow *window, 
 					int key, 
