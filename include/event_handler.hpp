@@ -37,7 +37,7 @@ typedef struct Render_Parameters {
     float aspect;       // aspect ratio
 
     // Constructor
-    parameters() {
+    Render_Parameters() :
 	    camera_x  	(0.), 			// degrees of rotation about x-axis
 	    camera_y  	(0.), 			// degrees of rotation about y-axis
 	    camera_z  	(-100.), 		// degrees of rotation about y-axis
@@ -50,9 +50,14 @@ typedef struct Render_Parameters {
 
 	    zoom 		(1),         	// zoom
 	    aspect 		(800. / 600.)   // aspect ratio
+    {
+    	// Initializations
     }
 } parameters;
 
+void handle_events(GLFWwindow *mWindow, parameters &params);
+
+void handle_events(GLFWwindow *mWindow, struct Render_Parameters &params);
 
 void key_callback(GLFWwindow *window, 
 					int key, 

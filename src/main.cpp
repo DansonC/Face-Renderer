@@ -51,7 +51,10 @@ const GLchar* fragmentSource = R"glsl(
     }
 )glsl";
 
-//parameter params = parameters();
+//---------------------------------//
+//---   Initialize Parameters   ---//
+//---------------------------------//
+parameters params = parameters();
 
 int main(int argc, char * argv[]) {
 
@@ -154,11 +157,11 @@ int main(int argc, char * argv[]) {
     // Add Occlusion Test
     glEnable(GL_DEPTH_TEST);
 
-    //Keyboard Event Handling
-    glfwSetKeyCallback(mWindow, key_callback);   
-
     // Rendering Loop
     while (glfwWindowShouldClose(mWindow) == false) {
+        // Keyboard Handler
+        handle_events(mWindow, params);
+
         // Animation
         auto t_now = std::chrono::high_resolution_clock::now();
         float time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
