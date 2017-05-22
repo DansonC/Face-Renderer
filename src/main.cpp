@@ -19,6 +19,7 @@
 // Support Headers
 #include "../include/io.hpp"
 #include "../include/event_handler.hpp"
+#include "../include/lodepng.h"
 
 //-----------------------------//
 //---   OpenGL Constructs   ---//
@@ -230,7 +231,26 @@ int main(int argc, char * argv[]) {
         // Flip Buffers and Draw
         glfwSwapBuffers(mWindow);
         glfwPollEvents();
-    }   glfwTerminate();
+    }   
+
+    GLubyte *pixels_flipped = (GLubyte*)malloc(4 * sizeof(GLubyte) * windowWidth * windowHeight);
+    GLubyte *pixels = (GLubyte*)malloc(4 * sizeof(GLubyte) * windowWidth * windowHeight);
+    glReadPixels(0, 0, windowWidth, windowHeight, GL_RGBA, GL_UNSIGNED_BYTE, pixels_flipped);
+
+    
+    for(int i = 0; i < windowHeight; i++)
+    {
+        for(int j = 0; j < windowWidth; j++)
+	{
+	    for(int k = 0; k < 4; k++)
+	        pixels[(j + i * windowWidth) * 4 + k] = pixels_flipped[(j + (windowHeight - i) * windowWidth) * 4 + k];
+	}
+    }
+    
+    lodepng::encode("out.png", (unsigned char*) pixels, windowWidth, windowHeight);
+    glfwTerminate();
+    free(pixels);
+    free(pixels_flipped);
 
     return EXIT_SUCCESS;
 }
