@@ -181,7 +181,6 @@ int main(int argc, char * argv[]) {
     // Rendering Loop
     while (glfwWindowShouldClose(mWindow) == false) {
         // Keyboard Handler
-        handle_events(mWindow, params);
 
         // Background Fill Color
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -194,6 +193,7 @@ int main(int argc, char * argv[]) {
         curr_time = glfwGetTime();
         double delta_time = curr_time - prev_time;
         frame_time += delta_time;
+        handle_events(mWindow, params, delta_time);
         if (frame_time >= MAX_FRAME_TIME) {
             frame_time = 0.;
             //cout << "frame rate " << 1. / delta_time << endl;    

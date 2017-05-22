@@ -20,10 +20,10 @@ using namespace std;
 //---------------------//
 // Speed Constants
 //const float ANIME_ROT_SPEED = 20.; 	// animated rotation speed
-const float ROT_DEGREE = 1;        	    // keyboard input rotation speed
-const float VFOV_DEGREE = 0.2;      	    // field of view angle--zoom sensitivity
-const float DEPTH_INCR = 0.5;      		// depth field sensitivity
-const float FOCUS_INCR = 0.05;     		// focus translation sensitivity
+const float ROT_DEGREE = 150;        	    // keyboard input rotation speed
+const float VFOV_DEGREE = 100;      	    // field of view angle--zoom sensitivity
+const float DEPTH_INCR = 100;      		// depth field sensitivity
+const float FOCUS_INCR = 75;     		// focus translation sensitivity
 const float FRAME_RATE = 100; 			// seconds before update transformations
 
 // Data Size                                            --- Fix Error Checking for Incorrect Data Size
@@ -68,7 +68,7 @@ typedef struct Render_Parameters {
     }
 } parameters;
 
-void handle_events(GLFWwindow *mWindow, parameters &params);
+void handle_events(GLFWwindow *mWindow, parameters &params, double delta);
 
 void key_callback(GLFWwindow *window, 
 					int key, 
