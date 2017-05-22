@@ -192,10 +192,10 @@ int main(int argc, char * argv[]) {
         prev_time = curr_time;
         curr_time = glfwGetTime();
         double delta_time = curr_time - prev_time;
-        frame_time += delta_time;
+        //frame_time += delta_time;
         handle_events(mWindow, params, delta_time);
-        if (frame_time >= MAX_FRAME_TIME) {
-            frame_time = 0.;
+        //if (frame_time >= MAX_FRAME_TIME) {
+            //frame_time = 0.;
             //cout << "frame rate " << 1. / delta_time << endl;    
 
             // Calculate Transformation
@@ -222,7 +222,7 @@ int main(int argc, char * argv[]) {
             );
             GLint uniProj = glGetUniformLocation(shaderProgram, "proj");
             glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
-        }
+        //}
 
         /** DRAW HERE **/
         glDrawElements(GL_TRIANGLES, ELEMENTS_SIZE, GL_UNSIGNED_INT, 0);
