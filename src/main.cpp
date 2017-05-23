@@ -6,8 +6,6 @@
 // Renderer Headers
 #include "../include/renderer.hpp"
 #include "../include/io.hpp"
-#include "../include/ui.hpp"
-#include "../include/output.hpp"
 #include "../include/save_png.hpp"
 
 
