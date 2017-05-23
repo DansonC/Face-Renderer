@@ -6,14 +6,19 @@
 //-------------------//
 //---   Headers   ---//
 //-------------------//
+// Renderer Headers
+//#include "../include/renderer.hpp"
+
 // System Headers
 #include <GLFW/glfw3.h>
+
 // Standard Headers
 #include <stdlib.h>
 #include <iostream>
 #include <math.h>
 
 using namespace std;
+
 
 //---------------------//
 //---   Constants   ---//
@@ -30,50 +35,57 @@ const float FRAME_RATE = 100; 			// seconds before update transformations
 const int VERTICES_SIZE = (53215 + 1) * 3; 
 const int ELEMENTS_SIZE = 105840 * 3;
 const int COLORS_SIZE = VERTICES_SIZE;
+const int VIEWS_SIZE = 3;
+
 
 //-------------------//
 //---   Structs   ---//
 //-------------------//
 typedef struct Render_Parameters {
     // Rotations About Axis                                 --- Add Functionality for Roll, Pitch, Yaw
-    float camera_x; 	// degrees of rotation about x-axis
-    float camera_y; 	// degrees of rotation about y-axis
-    float camera_z; 	// degrees of rotation about y-axis
-    float focus_x; 		// degrees of rotation about x-axis
-    float focus_y; 		// degrees of rotation about y-axis
-    float focus_z; 		// degrees of rotation about y-axis
+    float camera_x; 	// camera position x
+    float camera_y; 	// camera position y
+    float camera_z; 	// camera position z
+    float focus_x; 		// camera point of focus x
+    float focus_y; 		// camera point of focus y
+    float focus_z; 		// camera point of focus z
     float rot_x; 		// degrees of rotation about x-axis
     float rot_y; 		// degrees of rotation about y-axis
     float rot_z; 		// degrees of rotation about y-axis
 
-    float vfov;         // zoom
-    float aspect;       // aspect ratio
+    float vfov;         // vertical field of view/zoom
+    float aspect;       // aspect ratio (screenWidth / screenHeight)
 
     // Constructor
     Render_Parameters() :
-	    camera_x  	(0.), 			// degrees of rotation about x-axis
-	    camera_y  	(0.), 			// degrees of rotation about y-axis
-	    camera_z  	(-20.), 		// degrees of rotation about y-axis
-	    focus_x 	(0.), 			// degrees of rotation about x-axis
-	    focus_y 	(0.), 			// degrees of rotation about y-axis
-	    focus_z 	(0.),			// degrees of rotation about y-axis
-	    rot_x 		(0.), 			// degrees of rotation about x-axis
-	    rot_y 		(0.), 			// degrees of rotation about y-axis
-	    rot_z 		(0.), 			// degrees of rotation about y-axis
+	    camera_x  	(0.),
+	    camera_y  	(0.),
+	    camera_z  	(-20.),
+	    focus_x 	(0.),
+	    focus_y 	(0.),
+	    focus_z 	(0.),
+	    rot_x 		(0.),
+	    rot_y 		(0.),
+	    rot_z 		(0.),
 
-	    vfov 		(8.),         	// vertical field of view/zoom
-	    aspect 		(800. / 600.)   // aspect ratio
+	    vfov 		(8.),
+	    //aspect 		(800. / 600.)
+        aspect      ()
     {
     	// Initializations
     }
 } parameters;
 
-void handle_events(GLFWwindow *mWindow, parameters &params, double delta);
 
+//---------------------//
+//---   Functions   ---//
+//---------------------//
+void handle_events(GLFWwindow *mWindow, parameters &params, double delta);
+/*
 void key_callback(GLFWwindow *window, 
 					int key, 
 					int scancode, 
 					int action, 
 					int mode);
-
+*/
 #endif

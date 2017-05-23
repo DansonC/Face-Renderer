@@ -1,7 +1,15 @@
 // event_handler.cpp
 
+//-------------------//
+//---   Headers   ---//
+//-------------------//
+// Renderer Headers
 #include "../include/event_handler.hpp"
 
+
+//---------------------//
+//---   Functions   ---//
+//---------------------//
 void handle_events(GLFWwindow *mWindow, parameters &params, double delta) {
       // Keyboard Event Handling                                         ---READ KEY and SWITCH TABLE FUNCTION
   if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -61,13 +69,13 @@ void handle_events(GLFWwindow *mWindow, parameters &params, double delta) {
     //cout << "Saving .png --implement";
 }
 
+/*
 void key_callback(GLFWwindow* window, 
 										int key, 
 										int scancode, 
 										int action, 
 										int mode) {
 
-  /*
   if (action == GLFW_PRESS) {
       switch (key) {
       	case GLFW_KEY_ESCAPE:
@@ -149,7 +157,7 @@ void key_callback(GLFWwindow* window,
       		break;
   	}
   }       
-  */
 }
+*/
 
 		

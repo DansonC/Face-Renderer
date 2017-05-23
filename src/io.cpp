@@ -1,7 +1,15 @@
 // io.cpp
 
+//-------------------//
+//---   Headers   ---//
+//-------------------//
+// Renderer Headers
 #include "../include/io.hpp"
 
+
+//---------------------//
+//---   Functions   ---//
+//---------------------//
 void input(string filename, GLfloat *data) {
 	string line;
 	string::size_type sz;
@@ -50,6 +58,34 @@ void input(string filename, GLuint *data) {
 			int third = stoi(line, &sz);
 			*(data + k) = third;
 			i += 3;
+		}
+		myfile.close();
+	}
+	else cout << "Unable to open file"; 
+}
+
+void input(string filename, vector<parameters> &data) {
+	string line;
+	string::size_type sz;
+	float aspect = windowWidth / windowHeight;
+
+	ifstream myfile (filename);
+	if (myfile.is_open())
+	{
+		while ( getline (myfile,line) )
+		{
+			parameters params = parameters();
+			params.aspect = aspect;
+			sz = 0;
+			double first = stod(line, &sz);
+			params.rot_x = first;
+			line = line.substr(sz);
+			double second = stod(line, &sz);
+			params.rot_y = second;
+			line = line.substr(sz);
+			double third = stod(line, &sz);
+			params.rot_z = third;
+			data.push_back(params);
 		}
 		myfile.close();
 	}

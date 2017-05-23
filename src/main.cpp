@@ -1,25 +1,15 @@
+//renderer.cpp
+
 //-------------------//
 //---   Headers   ---//
 //-------------------//
-// System Headers
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <chrono>
-
-// Standard Headers
-#include <cstdio>
-#include <cstdlib>
-#include <string>
-#include <cstring>
-#include <math.h>
-
-// Support Headers
+// Renderer Headers
+#include "../include/renderer.hpp"
 #include "../include/io.hpp"
-#include "../include/event_handler.hpp"
-#include "../include/lodepng.h"
+#include "../include/ui.hpp"
+#include "../include/output.hpp"
+#include "../include/save_png.hpp"
+
 
 //-----------------------------//
 //---   OpenGL Constructs   ---//
@@ -52,42 +42,54 @@ const GLchar* fragmentSource = R"glsl(
     }
 )glsl";
 
+
 //---------------------------------//
 //---   Initialize Parameters   ---//
 //---------------------------------//
 parameters params = parameters();
 
+
+//-----------------------------//
+//---   Terminal Messages   ---//
+//-----------------------------//
+void usage() {
+    cout << "//-------------------------//\n"
+            "//---   Face Renderer   ---//\n"
+            "//-------------------------//\n";
+    cout << "usage: ./face_render -h for and help\n\n";
+}
+
+void help() {
+    cout << "//-------------------------//\n"
+            "//---   Face Renderer   ---//\n"
+            "//-------------------------//\n"
+
+            "\nCONTROLS\n"
+            "Arrow Keys (up/down)\t\t\trotate model about x-axis\n"
+            "Arrow Keys (left/right)\t\t\trotate model about y-axis\n"
+            "Square Brackets (left/right)\t\trotate model about z-axis\n"
+            "Minus and Plus(Equals)\t\t\tvertical field of view--zoom\n"
+            "W A S D Keys\t\t\t\ttranslate focal point of camera--translate model\n"
+            "Numpad 1 and 3\t\t\t\ttranslate camera position--move toward/away from model\n\n";
+}
+
+
+//----------------//
+//---   Main   ---//
+//----------------//
 int main(int argc, char * argv[]) {
-    if (argc == 1) {
-        cout << "//-------------------------//\n"
-                "//---   Face Renderer   ---//\n"
-                "//-------------------------//\n";
-        cout << "\nusage: ./face_render -h for and help\n";
-    //} else { cout << argv[1] << endl; }
-    } else if (argv[1][1] == 'h') {
-        cout << "//-------------------------//\n"
-                "//---   Face Renderer   ---//\n"
-                "//-------------------------//\n"
-
-                "\nCONTROLS\n"
-                "Arrow Keys (up/down)\t\t\trotate model about x-axis\n"
-                "Arrow Keys (left/right)\t\t\trotate model about y-axis\n"
-                "Square Brackets (left/right)\t\trotate model about z-axis\n"
-                "Minus and Plus(Equals)\t\t\tvertical field of view--zoom\n"
-                "W A S D Keys\t\t\t\ttranslate focal point of camera--translate model\n"
-                "Numpad 1 and 3\t\t\t\ttranslate camera position--move toward/away from model\n\n";
+    // Terminal Messages
+    int opt;
+    while ( (opt = getopt(argc, argv, "h")) != -1 ) {
+        switch (opt) {
+            case 'h':
+                help();
+                return 0;
+        }
     }
-    
-    //auto t_start = std::chrono::high_resolution_clock::now();
-    double start_time = glfwGetTime();
-    double curr_time = start_time;
-    double prev_time = start_time;
-    double frame_time = 0.;
-    const double MAX_FRAME_TIME = 1. / FRAME_RATE;
+    usage();
 
-    int windowWidth = 800;
-    int windowHeight = 600;
-
+    // OpenGL Window
     // Load GLFW and Create a Window
     if(glfwInit() == false)
     {
@@ -113,6 +115,7 @@ int main(int argc, char * argv[]) {
         fprintf(stderr, "Failed to Load OpenGL");
     }
 
+    // Load Buffers
     // Create Vertex Array Object
     GLuint vao;
     glGenVertexArrays(1, &vao);
@@ -132,9 +135,11 @@ int main(int argc, char * argv[]) {
     GLfloat vertices[VERTICES_SIZE];
     GLfloat colors[COLORS_SIZE];
     GLuint elements[ELEMENTS_SIZE];
+    vector<parameters> views;
     input("../input/shape.txt", (vertices + 3));
     input("../input/texture.txt", (colors + 3));
     input("../input/triangulation.txt", elements);
+    input("../input/views.txt", views);
     // Shift Texture Map for 1-Indexing
     for (int n = 0; n < COLORS_SIZE; n++) {
         colors[n] = colors[n] / 255.;
@@ -176,81 +181,23 @@ int main(int argc, char * argv[]) {
     glEnableVertexAttribArray(colorAttrib);
     glVertexAttribPointer(colorAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-    // Add Occlusion Test
+    // Occlusion Test
     glEnable(GL_DEPTH_TEST);
 
-    // Rendering Loop
-    while (glfwWindowShouldClose(mWindow) == false) {
-        // Keyboard Handler
+    // Output Image Files
+    output(mWindow, shaderProgram, views);
 
-        // Background Fill Color
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // User Interface
+    ui(mWindow, shaderProgram, params);
 
-        // Animation
-        //auto t_now = std::chrono::high_resolution_clock::now();
-        //double time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
-        prev_time = curr_time;
-        curr_time = glfwGetTime();
-        double delta_time = curr_time - prev_time;
-        //frame_time += delta_time;
-        handle_events(mWindow, params, delta_time);
-        //if (frame_time >= MAX_FRAME_TIME) {
-            //frame_time = 0.;
-            //cout << "frame rate " << 1. / delta_time << endl;    
-
-            // Calculate Transformation
-            glm::mat4 view = glm::lookAt(
-                     glm::vec3(params.camera_x, params.camera_y, params.camera_z),  // camera position
-                     glm::vec3(params.focus_x, params.focus_y, params.focus_z),     // point to be centered on-screen
-                     glm::vec3(0.0f, 1.0f, 0.0f)                                    // up vector
-                    );
-            GLint uniView = glGetUniformLocation(shaderProgram, "view");
-            glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
-
-            glm::mat4 model;
-            model = glm::rotate(model, glm::radians(params.rot_x), glm::vec3(1.0f, 0.0f, 0.0f)); // rotation about x-axis
-            model = glm::rotate(model, glm::radians(params.rot_y), glm::vec3(0.0f, 1.0f, 0.0f)); // rotation about y-axis
-            model = glm::rotate(model, glm::radians(params.rot_z), glm::vec3(0.0f, 0.0f, 1.0f)); // rotation about z-axis        
-            GLint uniModel = glGetUniformLocation(shaderProgram, "model");
-            glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
-
-            glm::mat4 proj = glm::perspective(
-            glm::radians(params.vfov),  // vertical field of view 
-            params.aspect,              // screen aspect ratio
-            0.1f,                       // near clipping plane
-            30.0f                       // far clipping plane
-            );
-            GLint uniProj = glGetUniformLocation(shaderProgram, "proj");
-            glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
-        //}
-
-        /** DRAW HERE **/
-        glDrawElements(GL_TRIANGLES, ELEMENTS_SIZE, GL_UNSIGNED_INT, 0);
-
-        // Flip Buffers and Draw
-        glfwSwapBuffers(mWindow);
-        glfwPollEvents();
-    }   
-
-    GLubyte *pixels_flipped = (GLubyte*)malloc(4 * sizeof(GLubyte) * windowWidth * windowHeight);
-    GLubyte *pixels = (GLubyte*)malloc(4 * sizeof(GLubyte) * windowWidth * windowHeight);
-    glReadPixels(0, 0, windowWidth, windowHeight, GL_RGBA, GL_UNSIGNED_BYTE, pixels_flipped);
-
-    
-    for(int i = 0; i < windowHeight; i++)
-    {
-        for(int j = 0; j < windowWidth; j++)
-	{
-	    for(int k = 0; k < 4; k++)
-	        pixels[(j + i * windowWidth) * 4 + k] = pixels_flipped[(j + (windowHeight - i) * windowWidth) * 4 + k];
-	}
-    }
-    
-    lodepng::encode("out.png", (unsigned char*) pixels, windowWidth, windowHeight);
+    glDeleteProgram(shaderProgram);
+    glDeleteShader(fragmentShader);
+    glDeleteShader(vertexShader);
+    glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &color_buffer);
+    glDeleteBuffers(1, &ebo);
+    glDeleteVertexArrays(1, &vao);
     glfwTerminate();
-    free(pixels);
-    free(pixels_flipped);
 
     return EXIT_SUCCESS;
 }
