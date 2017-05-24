@@ -67,7 +67,7 @@ void input(string filename, GLuint *data) {
 void input(string filename, vector<parameters> &data) {
 	string line;
 	string::size_type sz;
-	float aspect = windowWidth / windowHeight;
+	float aspect = 1.;
 
 	ifstream myfile (filename);
 	if (myfile.is_open())

@@ -23,18 +23,76 @@
 
 // Renderer Headers
 #include "../include/event_handler.hpp"
-#include "../include/save_png.hpp"
+#include "../include/lodepng.h"
+#include <string>
 
-//---------------------//
-//---   Constants   ---//
-//---------------------//
-const int windowWidth = 400;
-const int windowHeight = 400;
+class FaceRenderer
+{
+    public:
+    //---------------------//
+    //---   Functions   ---//
+    //---------------------//
+    FaceRenderer(GLfloat* vert, GLfloat* col, GLuint* elem, int num_vert, int num_col, int num_elem);
+    ~FaceRenderer();
+    int init();
+    void destroy();
+    void output(vector<parameters> &views);
+    void ui();
+    void save_png(string name);
+    //unsigned char* load_png(char* filename, unsigned int* image_w, unsigned int* image_h);
 
-//---------------------//
-//---   Functions   ---//
-//---------------------//
-void output(GLFWwindow *mWindow, GLuint shaderProgram, vector<parameters> &views);
-void ui(GLFWwindow *mWindow, GLuint shaderProgram, parameters &params);
+    private:
+    //---------------------//
+    //---   Constants   ---//
+    //---------------------//
+    const int windowWidth = 400;
+    const int windowHeight = 400;
+
+    // Shader sources
+    const GLchar* vertexSource = R"glsl(
+        #version 150 core
+        in vec3 position;
+        in vec3 color;
+
+        out vec3 Color;
+
+        uniform mat4 model;
+        uniform mat4 view;
+        uniform mat4 proj;
+        void main()
+        {
+        Color = color;
+            gl_Position = proj * view * model * vec4(-1 * position.x, position.y, position.z, 1.0);
+        }
+    )glsl";
+    const GLchar* fragmentSource = R"glsl(
+        #version 150 core
+        
+        in vec3 Color;
+        out vec4 outColor;
+        void main()
+        {
+            outColor = vec4(Color, 1.0);
+        }
+    )glsl";
+
+
+    GLfloat* vertices;
+    GLfloat* colors;
+    GLuint* elements;
+    int vertices_size;
+    int colors_size;
+    int elements_size;
+
+    GLuint vao;
+    GLuint vbo;
+    GLuint color_buffer;
+    GLuint ebo;
+    GLuint vertexShader;
+    GLuint fragmentShader;
+    GLuint shaderProgram;
+    GLFWwindow *mWindow; 
+    parameters params;
+};
 
 #endif
