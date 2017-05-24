@@ -7,7 +7,7 @@
 //---   Headers   ---//
 //-------------------//
 // Renderer Headers
-#include "../include/renderer.hpp"
+#include "../include/FaceRenderer3D.hpp"
 #include "../include/event_handler.hpp"
 
 // System Headers

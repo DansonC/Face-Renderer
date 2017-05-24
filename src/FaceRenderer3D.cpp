@@ -1,11 +1,11 @@
-//renderer.cpp
+//FaceRenderer3D.cpp
 
 //-------------------//
 //---   Headers   ---//
 //-------------------//
 
 // Renderer Headers
-#include "../include/renderer.hpp"
+#include "../include/FaceRenderer3D.hpp"
 //---------------------// //---   Functions   ---//
 //---------------------//
 
