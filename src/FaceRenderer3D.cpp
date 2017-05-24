@@ -125,7 +125,7 @@ void FaceRenderer::destroy()
 
 }
 void FaceRenderer::output(vector<parameters> &views) {
-    for (unsigned int i = 0; i < VIEWS_SIZE; i++) {
+    for (unsigned int i = 0; i < views.size(); i++) {
         // Set Parameters
         parameters params = views[i];
         // Calculate Transformation
@@ -158,7 +158,7 @@ void FaceRenderer::output(vector<parameters> &views) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // DRAW HERE
-        glDrawElements(GL_TRIANGLES, ELEMENTS_SIZE, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, elements_size, GL_UNSIGNED_INT, 0);
 
         // Flip Buffers and Draw
         glfwSwapBuffers(mWindow);
@@ -233,7 +233,7 @@ void FaceRenderer::ui() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // DRAW HERE
-        glDrawElements(GL_TRIANGLES, ELEMENTS_SIZE, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, elements_size, GL_UNSIGNED_INT, 0);
 
         // Flip Buffers and Draw
         glfwSwapBuffers(mWindow);

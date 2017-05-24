@@ -72,10 +72,10 @@ int main(int argc, char * argv[]) {
         return EXIT_FAILURE;
 
     // Output Image Files
-    //renderer->output(views);
+    renderer->output(views);
 
     // User Interface
-    renderer->ui();
+    //renderer->ui();
     renderer->destroy();
 
     return EXIT_SUCCESS;
