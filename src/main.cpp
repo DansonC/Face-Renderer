@@ -20,7 +20,9 @@ void usage() {
     cout << "//-------------------------//\n"
             "//---   Face Renderer   ---//\n"
             "//-------------------------//\n";
-    cout << "usage: ./face_render -h for and help\n\n";
+    cout << "usage: ./FaceRender3D -h for and help\n\n"
+            "\t\t./FaceRenderer3D -o to output .png image set in output directory\n"
+            "\t\talso, an out.png will be saved in the current directory upon exit of ui\n\n";
 }
 
 void help() {
@@ -43,12 +45,17 @@ void help() {
 //----------------//
 int main(int argc, char * argv[]) {
     // Terminal Messages
+    bool output_png = false;
     int opt;
-    while ( (opt = getopt(argc, argv, "h")) != -1 ) {
+    string directory;
+    while ( (opt = getopt(argc, argv, "ho:")) != -1 ) {
         switch (opt) {
             case 'h':
                 help();
-                return 0;
+                return EXIT_SUCCESS;
+            case 'o':
+                output_png = true;
+                directory = optarg;
         }
     }
     usage();
@@ -72,7 +79,8 @@ int main(int argc, char * argv[]) {
         return EXIT_FAILURE;
 
     // Output Image Files
-    //renderer->output(views);
+    //renderer->output(views, directory);
+
 
     // User Interface
     renderer->ui();

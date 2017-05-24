@@ -124,7 +124,7 @@ void FaceRenderer::destroy()
     glfwTerminate();
 
 }
-void FaceRenderer::output(vector<parameters> &views) {
+void FaceRenderer::output(vector<parameters> &views, string directory) {
     for (unsigned int i = 0; i < VIEWS_SIZE; i++) {
         // Set Parameters
         parameters params = views[i];
