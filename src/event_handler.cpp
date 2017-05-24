@@ -5,7 +5,7 @@
 //-------------------//
 // Renderer Headers
 #include "../include/event_handler.hpp"
-
+#include "../include/FaceRenderer3D.hpp"
 
 //---------------------//
 //---   Functions   ---//
@@ -65,8 +65,10 @@ void handle_events(GLFWwindow *mWindow, parameters &params, double delta) {
   if (glfwGetKey(mWindow, GLFW_KEY_PERIOD) == GLFW_PRESS)
     params.aspect -= 0.1;
 
-  //if (glfwGetKey(mWindow, GLFW_KEY_P) == GLFW_RELEASE)
-    //cout << "Saving .png --implement";
+  //if (glfwGetKey(mWindow, GLFW_KEY_P) == GLFW_RELEASE) {
+    //cout << "Saving out.png";
+    //FaceRenderer3D::save_png("out.png");
+  //}
 }
 
 /*

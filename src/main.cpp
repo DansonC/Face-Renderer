@@ -16,21 +16,19 @@
 //-----------------------------//
 //---   Terminal Messages   ---//
 //-----------------------------//
-void usage() {
+void title() {
     cout << "//-------------------------//\n"
             "//---   Face Renderer   ---//\n"
             "//-------------------------//\n";
-    cout << "usage: ./FaceRender3D -h for and help\n\n"
-            "\t\t./FaceRenderer3D -o to output .png image set in output directory\n"
-            "\t\talso, an out.png will be saved in the current directory upon exit of ui\n\n";
+}
+
+void usage() {
+    cout << "usage:\t./FaceRender3D -h for help\n"
+            "\t./FaceRenderer3D -o to output .png image set in output directory\n\n";
 }
 
 void help() {
-    cout << "//-------------------------//\n"
-            "//---   Face Renderer   ---//\n"
-            "//-------------------------//\n"
-
-            "\nCONTROLS\n"
+    cout << "\nCONTROLS\n"
             "Arrow Keys (up/down)\t\t\trotate model about x-axis\n"
             "Arrow Keys (left/right)\t\t\trotate model about y-axis\n"
             "Square Brackets (left/right)\t\trotate model about z-axis\n"
@@ -44,6 +42,7 @@ void help() {
 //---   Main   ---//
 //----------------//
 int main(int argc, char * argv[]) {
+
     // Terminal Messages
     bool output_png = false;
     int opt;
@@ -51,11 +50,22 @@ int main(int argc, char * argv[]) {
     while ( (opt = getopt(argc, argv, "ho:")) != -1 ) {
         switch (opt) {
             case 'h':
+                title();
                 help();
-                return EXIT_SUCCESS;
+                break;
             case 'o':
                 output_png = true;
                 directory = optarg;
+                title();
+                break;
+            case '?':
+                if (optopt == 'o') {
+                    cout << "\nmust specify an existing directory\n\n";
+                    return EXIT_FAILURE;
+                }
+                title();
+                usage();
+                return EXIT_FAILURE;
         }
     }
     usage();
@@ -74,17 +84,15 @@ int main(int argc, char * argv[]) {
         colors[n] = colors[n] / 255.;
     }
 
-    FaceRenderer* renderer = new FaceRenderer(vertices, colors, elements, VERTICES_SIZE, COLORS_SIZE, ELEMENTS_SIZE);
+    FaceRenderer3D* renderer = new FaceRenderer3D(vertices, colors, elements, VERTICES_SIZE, COLORS_SIZE, ELEMENTS_SIZE);
     if(renderer->init() == EXIT_FAILURE)
         return EXIT_FAILURE;
 
     // Output Image Files
-
-    //renderer->output(views, directory);
-
+    if (output_png) { renderer->output(views, directory); }
 
     // User Interface
-    //renderer->ui();
+    renderer->ui();
     renderer->destroy();
 
     return EXIT_SUCCESS;

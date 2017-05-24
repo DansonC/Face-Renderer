@@ -26,19 +26,19 @@
 #include "../include/lodepng.h"
 #include <string>
 
-class FaceRenderer
+class FaceRenderer3D
 {
     public:
     //---------------------//
     //---   Functions   ---//
     //---------------------//
-    FaceRenderer(GLfloat* vert, GLfloat* col, GLuint* elem, int num_vert, int num_col, int num_elem);
-    ~FaceRenderer();
+    FaceRenderer3D(GLfloat* vert, GLfloat* col, GLuint* elem, int num_vert, int num_col, int num_elem);
+    ~FaceRenderer3D();
     int init();
     void destroy();
-    void output(vector<parameters> &views);
+    void output(vector<parameters> &views, string directory);
     void ui();
-    void save_png(string name);
+    void save_png(string filename);
     //unsigned char* load_png(char* filename, unsigned int* image_w, unsigned int* image_h);
 
     private:

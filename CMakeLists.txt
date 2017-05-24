@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(face_render)
+project(FaceRenderer3D)
 
 option(GLFW_BUILD_DOCS OFF)
 option(GLFW_BUILD_EXAMPLES OFF)

@@ -1,4 +1,4 @@
-//FaceRenderer3D.cpp
+//FaceRenderer3D3D.cpp
 
 //-------------------//
 //---   Headers   ---//
@@ -10,8 +10,7 @@
 //---------------------//
 
 
-FaceRenderer::FaceRenderer(GLfloat* vert, GLfloat* col, GLuint* elem, int num_vert, int num_col, int num_elem)
-{
+FaceRenderer3D::FaceRenderer3D(GLfloat* vert, GLfloat* col, GLuint* elem, int num_vert, int num_col, int num_elem) {
 
     //---------------------------------//
     //---   Initialize Parameters   ---//
@@ -27,8 +26,7 @@ FaceRenderer::FaceRenderer(GLfloat* vert, GLfloat* col, GLuint* elem, int num_ve
     elements_size = num_elem;
 }
 
-int FaceRenderer::init()
-{
+int FaceRenderer3D::init() {
 
     // OpenGL Window
     // Load GLFW and Create a Window
@@ -111,8 +109,7 @@ int FaceRenderer::init()
     return EXIT_SUCCESS;
 }
 
-void FaceRenderer::destroy()
-{
+void FaceRenderer3D::destroy() {
 
     glDeleteProgram(shaderProgram);
     glDeleteShader(fragmentShader);
@@ -122,10 +119,10 @@ void FaceRenderer::destroy()
     glDeleteBuffers(1, &ebo);
     glDeleteVertexArrays(1, &vao);
     glfwTerminate();
-
 }
 
-void FaceRenderer::output(vector<parameters> &views, string directory) {
+void FaceRenderer3D::output(vector<parameters> &views, string directory) {
+
     for (unsigned int i = 0; i < views.size(); i++) {
         // Set Parameters
         parameters params = views[i];
@@ -165,7 +162,9 @@ void FaceRenderer::output(vector<parameters> &views, string directory) {
         glfwSwapBuffers(mWindow);
         glfwPollEvents();
 
-        string filename = "../output/";
+        string filename = "../";
+        filename.append(directory);
+        filename.append("/");
         filename.append(to_string(i));
         filename.append(".png");
         save_png(filename);
@@ -173,7 +172,7 @@ void FaceRenderer::output(vector<parameters> &views, string directory) {
     }
 }
 
-void FaceRenderer::ui() {
+void FaceRenderer3D::ui() {
 
     //unsigned int image_w, image_h;
     //unsigned char* image =  load_png("bg.png", &image_w, &image_h);
@@ -240,9 +239,11 @@ void FaceRenderer::ui() {
         glfwSwapBuffers(mWindow);
         glfwPollEvents();
     }
+    save_png("out.png");
 }
 
-void FaceRenderer::save_png(string name) {
+void FaceRenderer3D::save_png(string filename) {
+
     // Output Image File
     GLubyte *pixels_flipped = (GLubyte*)malloc(4 * sizeof(GLubyte) * windowWidth * windowHeight);
     GLubyte *pixels = (GLubyte*)malloc(4 * sizeof(GLubyte) * windowWidth * windowHeight);
@@ -254,8 +255,7 @@ void FaceRenderer::save_png(string name) {
 	           pixels[(j + i * windowWidth) * 4 + k] = pixels_flipped[(j + (windowHeight - i) * windowWidth) * 4 + k];
 	    }
     }
-    
-    lodepng::encode(name, (unsigned char*) pixels, windowWidth, windowHeight);
+    lodepng::encode(filename, (unsigned char*) pixels, windowWidth, windowHeight);
     free(pixels);
     free(pixels_flipped);
 }
